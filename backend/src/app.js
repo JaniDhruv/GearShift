@@ -27,7 +27,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('../docs/swagger');
+
 // Routes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api-docs.json', (req, res) => res.status(200).json(swaggerSpec));
 app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
