@@ -85,10 +85,30 @@ const deleteVehicle = async (req, res, next) => {
   }
 };
 
+/**
+ * Records a vehicle sale (purchase) by reducing inventory
+ */
+const purchaseVehicle = async (req, res, next) => {
+  try {
+    const result = await vehicleService.purchaseVehicleById(req.params.id);
+    if (!result) {
+      return sendNotFound(res);
+    }
+    if (result.outOfStock) {
+      return res.status(400).json({ error: 'Vehicle out of stock' });
+    }
+
+    return res.status(200).json({ vehicle: result.vehicle });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   createVehicle,
   getVehicles,
   searchVehicles,
   updateVehicle,
-  deleteVehicle
+  deleteVehicle,
+  purchaseVehicle
 };

@@ -70,6 +70,21 @@ const deleteVehicleById = async (id) => {
   return sanitizeVehicle(deleted);
 };
 
+/**
+ * Purchases a vehicle by decrementing quantity if stock is available
+ */
+const purchaseVehicleById = async (id) => {
+  const vehicle = await vehicleRepository.findById(id);
+  if (!vehicle) {
+    return null;
+  }
+  if (vehicle.quantity <= 0) {
+    return { outOfStock: true };
+  }
+  const updated = await vehicleRepository.updateById(id, { quantity: vehicle.quantity - 1 });
+  return { vehicle: sanitizeVehicle(updated) };
+};
+
 module.exports = {
   createVehicle,
   getVehicleById,
@@ -77,5 +92,6 @@ module.exports = {
   searchVehicles,
   updateVehicleById,
   deleteVehicleById,
+  purchaseVehicleById,
   sanitizeVehicle
 };
