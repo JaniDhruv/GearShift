@@ -6,6 +6,24 @@ const isValidQuantity = (quantity) => typeof quantity === 'number' && Number.isI
 const isValidCategory = (category) => ALL_VEHICLE_CATEGORIES.includes(category);
 
 /**
+ * Shared attribute validation helper
+ * @param {Object} payload
+ * @returns {string|null} Error message or null if valid
+ */
+const checkVehicleAttributes = ({ category, price, quantity }) => {
+  if (category !== undefined && !isValidCategory(category)) {
+    return `Invalid category. Must be one of: ${ALL_VEHICLE_CATEGORIES.join(', ')}`;
+  }
+  if (price !== undefined && !isValidPrice(price)) {
+    return 'Price must be a strictly positive number';
+  }
+  if (quantity !== undefined && !isValidQuantity(quantity)) {
+    return 'Quantity must be a non-negative integer';
+  }
+  return null;
+};
+
+/**
  * Validates Mongoose ObjectId format in req.params.id
  */
 const validateVehicleId = (req, res, next) => {
@@ -26,16 +44,9 @@ const validateVehicleCreation = (req, res, next) => {
     return res.status(400).json({ error: 'All vehicle fields (make, model, category, price, quantity) are required' });
   }
 
-  if (!isValidCategory(category)) {
-    return res.status(400).json({ error: `Invalid category. Must be one of: ${ALL_VEHICLE_CATEGORIES.join(', ')}` });
-  }
-
-  if (!isValidPrice(price)) {
-    return res.status(400).json({ error: 'Price must be a strictly positive number' });
-  }
-
-  if (!isValidQuantity(quantity)) {
-    return res.status(400).json({ error: 'Quantity must be a non-negative integer' });
+  const attributeError = checkVehicleAttributes({ category, price, quantity });
+  if (attributeError) {
+    return res.status(400).json({ error: attributeError });
   }
 
   return next();
@@ -45,18 +56,9 @@ const validateVehicleCreation = (req, res, next) => {
  * Express middleware to validate vehicle update payload
  */
 const validateVehicleUpdate = (req, res, next) => {
-  const { category, price, quantity } = req.body;
-
-  if (category !== undefined && !isValidCategory(category)) {
-    return res.status(400).json({ error: `Invalid category. Must be one of: ${ALL_VEHICLE_CATEGORIES.join(', ')}` });
-  }
-
-  if (price !== undefined && !isValidPrice(price)) {
-    return res.status(400).json({ error: 'Price must be a strictly positive number' });
-  }
-
-  if (quantity !== undefined && !isValidQuantity(quantity)) {
-    return res.status(400).json({ error: 'Quantity must be a non-negative integer' });
+  const attributeError = checkVehicleAttributes(req.body);
+  if (attributeError) {
+    return res.status(400).json({ error: attributeError });
   }
 
   return next();

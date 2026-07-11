@@ -4,6 +4,12 @@ const vehicleService = require('../services/vehicle.service');
  * Vehicle Controller
  * Clean Architecture Layer: Interface Adapters
  */
+
+const sendNotFound = (res) => res.status(404).json({ error: 'Vehicle not found' });
+
+/**
+ * Creates a new vehicle inventory entry
+ */
 const createVehicle = async (req, res, next) => {
   try {
     const { make, model, category, price, quantity } = req.body;
@@ -24,7 +30,7 @@ const createVehicle = async (req, res, next) => {
 };
 
 /**
- * Retrieves all vehicles
+ * Retrieves all vehicles from inventory
  */
 const getVehicles = async (req, res, next) => {
   try {
@@ -40,12 +46,9 @@ const getVehicles = async (req, res, next) => {
  */
 const updateVehicle = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const updateData = req.body;
-
-    const vehicle = await vehicleService.updateVehicleById(id, updateData);
+    const vehicle = await vehicleService.updateVehicleById(req.params.id, req.body);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return sendNotFound(res);
     }
 
     return res.status(200).json({ vehicle });
@@ -59,11 +62,9 @@ const updateVehicle = async (req, res, next) => {
  */
 const deleteVehicle = async (req, res, next) => {
   try {
-    const { id } = req.params;
-
-    const vehicle = await vehicleService.deleteVehicleById(id);
+    const vehicle = await vehicleService.deleteVehicleById(req.params.id);
     if (!vehicle) {
-      return res.status(404).json({ error: 'Vehicle not found' });
+      return sendNotFound(res);
     }
 
     return res.status(200).json({ message: 'Vehicle deleted successfully', vehicle });
