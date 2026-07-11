@@ -2,10 +2,14 @@
  * Health Check Controller
  *
  * Clean Architecture Layer: Interface Adapters (Controllers)
- *
- * Responsibilities:
- * - Handle HTTP requests for system health/liveness
- * - Return structured status response
- *
- * Note: Will be implemented incrementally via TDD.
  */
+const getHealthStatus = (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+};
+
+module.exports = {
+  getHealthStatus
+};
