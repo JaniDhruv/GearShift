@@ -3,7 +3,7 @@ const { setupTestDB } = require('../helpers/database');
 const Vehicle = require('../../src/models/vehicle.model');
 const mongoose = require('mongoose');
 
-describe('Inventory Operations Integration Test Suite (POST /api/vehicles/:id/purchase)', () => {
+describe('Inventory Operations Integration Test Suite', () => {
   setupTestDB();
 
   const adminUser = {
@@ -81,80 +81,187 @@ describe('Inventory Operations Integration Test Suite (POST /api/vehicles/:id/pu
     outOfStockVehicleId = vehicle2._id.toString();
   });
 
-  describe('Successful Inventory Reduction (STAFF & ADMIN)', () => {
-    it('should allow ADMIN to record a sale and decrement vehicle quantity by 1', async () => {
-      const response = await getTestAgent()
-        .post(`/api/vehicles/${inStockVehicleId}/purchase`)
-        .set('Authorization', `Bearer ${adminToken}`);
+  describe('POST /api/vehicles/:id/purchase', () => {
+    describe('Successful Inventory Reduction (STAFF & ADMIN)', () => {
+      it('should allow ADMIN to record a sale and decrement vehicle quantity by 1', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/purchase`)
+          .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('vehicle');
-      expect(response.body.vehicle).toHaveProperty('id', inStockVehicleId);
-      expect(response.body.vehicle).toHaveProperty('quantity', 4);
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('vehicle');
+        expect(response.body.vehicle).toHaveProperty('id', inStockVehicleId);
+        expect(response.body.vehicle).toHaveProperty('quantity', 4);
 
-      const dbVehicle = await Vehicle.findById(inStockVehicleId);
-      expect(dbVehicle.quantity).toBe(4);
+        const dbVehicle = await Vehicle.findById(inStockVehicleId);
+        expect(dbVehicle.quantity).toBe(4);
+      });
+
+      it('should allow STAFF to record a sale and decrement vehicle quantity by 1', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/purchase`)
+          .set('Authorization', `Bearer ${staffToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('vehicle');
+        expect(response.body.vehicle).toHaveProperty('quantity', 4);
+      });
     });
 
-    it('should allow STAFF to record a sale and decrement vehicle quantity by 1', async () => {
-      const response = await getTestAgent()
-        .post(`/api/vehicles/${inStockVehicleId}/purchase`)
-        .set('Authorization', `Bearer ${staffToken}`);
+    describe('Business Rule Validation (Out of Stock)', () => {
+      it('should return 400 Bad Request when attempting to purchase an out-of-stock vehicle', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${outOfStockVehicleId}/purchase`)
+          .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('vehicle');
-      expect(response.body.vehicle).toHaveProperty('quantity', 4);
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+    });
+
+    describe('Invalid Identifiers & Not Found Scenarios', () => {
+      it('should return 404 Not Found when recording a sale for a non-existent vehicle ID', async () => {
+        const nonExistentId = new mongoose.Types.ObjectId().toString();
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${nonExistentId}/purchase`)
+          .set('Authorization', `Bearer ${adminToken}`);
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      it('should return 400 Bad Request when vehicle ID format is invalid', async () => {
+        const response = await getTestAgent()
+          .post('/api/vehicles/invalid-id-format/purchase')
+          .set('Authorization', `Bearer ${adminToken}`);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+    });
+
+    describe('Authorization & Authentication Restrictions', () => {
+      it('should return 401 Unauthorized when authorization header is missing', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/purchase`);
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      it('should return 403 Forbidden when standard user attempts to record a sale', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/purchase`)
+          .set('Authorization', `Bearer ${userToken}`);
+
+        expect(response.status).toBe(403);
+        expect(response.body).toHaveProperty('error');
+      });
     });
   });
 
-  describe('Business Rule Validation (Out of Stock)', () => {
-    it('should return 400 Bad Request when attempting to purchase an out-of-stock vehicle', async () => {
-      const response = await getTestAgent()
-        .post(`/api/vehicles/${outOfStockVehicleId}/purchase`)
-        .set('Authorization', `Bearer ${adminToken}`);
+  describe('POST /api/vehicles/:id/restock', () => {
+    describe('Successful Restocking (ADMIN Only)', () => {
+      it('should allow ADMIN to restock an in-stock vehicle by a positive quantity', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ quantity: 10 });
 
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
-    });
-  });
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('vehicle');
+        expect(response.body.vehicle).toHaveProperty('id', inStockVehicleId);
+        expect(response.body.vehicle).toHaveProperty('quantity', 15);
 
-  describe('Invalid Identifiers & Not Found Scenarios', () => {
-    it('should return 404 Not Found when recording a sale for a non-existent vehicle ID', async () => {
-      const nonExistentId = new mongoose.Types.ObjectId().toString();
-      const response = await getTestAgent()
-        .post(`/api/vehicles/${nonExistentId}/purchase`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        const dbVehicle = await Vehicle.findById(inStockVehicleId);
+        expect(dbVehicle.quantity).toBe(15);
+      });
 
-      expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty('error');
-    });
+      it('should allow ADMIN to restock an out-of-stock vehicle (quantity = 0)', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${outOfStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ quantity: 3 });
 
-    it('should return 400 Bad Request when vehicle ID format is invalid', async () => {
-      const response = await getTestAgent()
-        .post('/api/vehicles/invalid-id-format/purchase')
-        .set('Authorization', `Bearer ${adminToken}`);
-
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
-    });
-  });
-
-  describe('Authorization & Authentication Restrictions', () => {
-    it('should return 401 Unauthorized when authorization header is missing', async () => {
-      const response = await getTestAgent()
-        .post(`/api/vehicles/${inStockVehicleId}/purchase`);
-
-      expect(response.status).toBe(401);
-      expect(response.body).toHaveProperty('error');
+        expect(response.status).toBe(200);
+        expect(response.body.vehicle).toHaveProperty('quantity', 3);
+      });
     });
 
-    it('should return 403 Forbidden when standard user attempts to record a sale', async () => {
-      const response = await getTestAgent()
-        .post(`/api/vehicles/${inStockVehicleId}/purchase`)
-        .set('Authorization', `Bearer ${userToken}`);
+    describe('Invalid Quantities Validation', () => {
+      it('should return 400 Bad Request when restock quantity is 0', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ quantity: 0 });
 
-      expect(response.status).toBe(403);
-      expect(response.body).toHaveProperty('error');
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      it('should return 400 Bad Request when restock quantity is negative', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ quantity: -5 });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      it('should return 400 Bad Request when restock quantity is missing or not a number', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({});
+
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+    });
+
+    describe('Non-Existent Vehicles Scenarios', () => {
+      it('should return 404 Not Found when restocking a non-existent vehicle ID', async () => {
+        const nonExistentId = new mongoose.Types.ObjectId().toString();
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${nonExistentId}/restock`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ quantity: 5 });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+      });
+    });
+
+    describe('Authorization & Authentication Restrictions (ADMIN Only)', () => {
+      it('should return 401 Unauthorized when authorization header is missing', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .send({ quantity: 5 });
+
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      it('should return 403 Forbidden when STAFF attempts to restock a vehicle', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${staffToken}`)
+          .send({ quantity: 5 });
+
+        expect(response.status).toBe(403);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      it('should return 403 Forbidden when standard user attempts to restock a vehicle', async () => {
+        const response = await getTestAgent()
+          .post(`/api/vehicles/${inStockVehicleId}/restock`)
+          .set('Authorization', `Bearer ${userToken}`)
+          .send({ quantity: 5 });
+
+        expect(response.status).toBe(403);
+        expect(response.body).toHaveProperty('error');
+      });
     });
   });
 });
