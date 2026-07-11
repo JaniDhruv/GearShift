@@ -1,14 +1,25 @@
-/**
- * Express Application Setup
- *
- * Clean Architecture Layer: Frameworks & Drivers
- *
- * Responsibilities:
- * - Initialize Express application instance
- * - Register global middleware (cors, helmet, morgan, express.json)
- * - Mount API route modules
- * - Register 404 Not Found middleware
- * - Register global error handling middleware
- *
- * Note: Will be implemented incrementally via TDD.
- */
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+
+const app = express();
+
+// Global security headers
+app.use(helmet());
+
+// Cross-Origin Resource Sharing configuration
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*'
+}));
+
+// Request body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// HTTP request logging in development mode
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+module.exports = app;
