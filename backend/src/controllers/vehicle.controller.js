@@ -7,7 +7,6 @@ const vehicleService = require('../services/vehicle.service');
 const createVehicle = async (req, res, next) => {
   try {
     const { make, model, category, price, quantity } = req.body;
-    const createdBy = req.user.id;
 
     const vehicle = await vehicleService.createVehicle({
       make,
@@ -15,7 +14,7 @@ const createVehicle = async (req, res, next) => {
       category,
       price,
       quantity,
-      createdBy
+      createdBy: req.user.id
     });
 
     return res.status(201).json({ vehicle });
