@@ -1,9 +1,5 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user.repository');
-
-const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET || 'gearshift_jwt_secret_development_key';
+const { hashPassword, comparePassword, generateToken } = require('../utils/auth.utils');
 
 /**
  * Transforms a User document into a safe client DTO without password
@@ -28,7 +24,7 @@ const registerUser = async ({ name, email, password, role }) => {
     throw error;
   }
 
-  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+  const hashedPassword = await hashPassword(password);
 
   const createdUser = await userRepository.create({
     name,
@@ -51,18 +47,14 @@ const loginUser = async ({ email, password }) => {
     throw error;
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const isPasswordValid = await comparePassword(password, user.password);
   if (!isPasswordValid) {
     const error = new Error('Invalid email or password');
     error.status = 401;
     throw error;
   }
 
-  const token = jwt.sign(
-    { id: user._id.toString(), role: user.role },
-    JWT_SECRET,
-    { expiresIn: '1d' }
-  );
+  const token = generateToken(user);
 
   return {
     token,
