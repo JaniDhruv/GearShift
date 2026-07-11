@@ -22,6 +22,24 @@ const register = async (req, res, next) => {
   }
 };
 
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const { token, user } = await authService.loginUser({ email, password });
+    return res.status(200).json({ token, user });
+  } catch (error) {
+    if (error.status === 401) {
+      return res.status(401).json({ error: error.message });
+    }
+    return next(error);
+  }
+};
+
 module.exports = {
-  register
+  register,
+  login
 };

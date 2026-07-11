@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user.repository');
 
 const SALT_ROUNDS = 10;
+const JWT_SECRET = process.env.JWT_SECRET || 'gearshift_jwt_secret_development_key';
 
 /**
  * Transforms a User document into a safe client DTO without password
@@ -16,8 +18,7 @@ const sanitizeUser = (user) => ({
 });
 
 /**
- * Auth Service
- * Clean Architecture Layer: Application Business Rules
+ * Registers a new user
  */
 const registerUser = async ({ name, email, password, role }) => {
   const existingUser = await userRepository.findByEmail(email);
@@ -39,7 +40,38 @@ const registerUser = async ({ name, email, password, role }) => {
   return sanitizeUser(createdUser);
 };
 
+/**
+ * Authenticates a user and generates a JWT token
+ */
+const loginUser = async ({ email, password }) => {
+  const user = await userRepository.findByEmail(email);
+  if (!user) {
+    const error = new Error('Invalid email or password');
+    error.status = 401;
+    throw error;
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    const error = new Error('Invalid email or password');
+    error.status = 401;
+    throw error;
+  }
+
+  const token = jwt.sign(
+    { id: user._id.toString(), role: user.role },
+    JWT_SECRET,
+    { expiresIn: '1d' }
+  );
+
+  return {
+    token,
+    user: sanitizeUser(user)
+  };
+};
+
 module.exports = {
   registerUser,
+  loginUser,
   sanitizeUser
 };
