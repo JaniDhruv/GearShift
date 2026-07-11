@@ -4,6 +4,9 @@ const ROLES = {
   ADMIN: 'admin'
 };
 
+const ALL_ROLES = Object.values(ROLES);
+
 module.exports = {
-  ROLES
+  ROLES,
+  ALL_ROLES
 };

@@ -1,3 +1,5 @@
+const { hasRole } = require('../utils/permissions');
+
 /**
  * Reusable Role-Based Authorization Middleware
  * Clean Architecture Layer: Interface Adapters
@@ -6,14 +8,12 @@
  * @returns {Function} Express middleware function
  */
 const authorize = (...allowedRoles) => {
-  const normalizedRoles = allowedRoles.map((role) => role.toLowerCase());
-
   return (req, res, next) => {
     if (!req.user || !req.user.role) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    if (!normalizedRoles.includes(req.user.role.toLowerCase())) {
+    if (!hasRole(req.user.role, allowedRoles)) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
 
