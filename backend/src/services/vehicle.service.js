@@ -22,6 +22,24 @@ const sanitizeVehicle = (vehicle) => {
 };
 
 /**
+ * Shared helper to adjust vehicle quantity safely
+ */
+const adjustVehicleQuantityById = async (id, delta) => {
+  const vehicle = await vehicleRepository.findById(id);
+  if (!vehicle) {
+    return { found: false };
+  }
+
+  const newQuantity = vehicle.quantity + delta;
+  if (newQuantity < 0) {
+    return { found: true, outOfStock: true };
+  }
+
+  const updated = await vehicleRepository.updateById(id, { quantity: newQuantity });
+  return { found: true, outOfStock: false, vehicle: sanitizeVehicle(updated) };
+};
+
+/**
  * Creates a new vehicle in the repository
  */
 const createVehicle = async (vehicleData) => {
@@ -74,29 +92,19 @@ const deleteVehicleById = async (id) => {
  * Purchases a vehicle by decrementing quantity if stock is available
  */
 const purchaseVehicleById = async (id) => {
-  const vehicle = await vehicleRepository.findById(id);
-  if (!vehicle) {
-    return null;
-  }
-  if (vehicle.quantity <= 0) {
-    return { outOfStock: true };
-  }
-  const updated = await vehicleRepository.updateById(id, { quantity: vehicle.quantity - 1 });
-  return { vehicle: sanitizeVehicle(updated) };
+  const result = await adjustVehicleQuantityById(id, -1);
+  if (!result.found) return null;
+  if (result.outOfStock) return { outOfStock: true };
+  return { vehicle: result.vehicle };
 };
 
 /**
  * Restocks a vehicle inventory by increasing quantity
  */
 const restockVehicleById = async (id, quantityToAdd) => {
-  const vehicle = await vehicleRepository.findById(id);
-  if (!vehicle) {
-    return null;
-  }
-  const updated = await vehicleRepository.updateById(id, {
-    quantity: vehicle.quantity + Number(quantityToAdd)
-  });
-  return sanitizeVehicle(updated);
+  const result = await adjustVehicleQuantityById(id, Number(quantityToAdd));
+  if (!result.found) return null;
+  return result.vehicle;
 };
 
 module.exports = {
