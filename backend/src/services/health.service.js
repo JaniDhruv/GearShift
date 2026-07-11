@@ -1,18 +1,4 @@
-const mongoose = require('mongoose');
-
-/**
- * Helper to determine current MongoDB connection state string
- * @returns {string}
- */
-const getDatabaseStatus = () => {
-  const states = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting'
-  };
-  return states[mongoose.connection.readyState] || 'disconnected';
-};
+const { getDatabaseConnectionStatus } = require('../utils/dbHealth');
 
 /**
  * Health Check Service
@@ -28,7 +14,7 @@ const getSystemHealth = () => ({
   uptime: process.uptime(),
   environment: process.env.NODE_ENV || 'development',
   database: {
-    status: getDatabaseStatus()
+    status: getDatabaseConnectionStatus()
   }
 });
 
