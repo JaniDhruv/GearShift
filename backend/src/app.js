@@ -30,11 +30,6 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 
-if (process.env.NODE_ENV === 'test') {
-  const rbacTestRoutes = require('./routes/rbacTest.routes');
-  app.use('/api/rbac-test', rbacTestRoutes);
-}
-
 // Handle unknown routes (404 Not Found)
 app.use(notFoundHandler);
 

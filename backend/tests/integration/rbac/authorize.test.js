@@ -1,8 +1,30 @@
+const express = require('express');
+const request = require('supertest');
 const { getTestAgent } = require('../../helpers/app');
 const { setupTestDB } = require('../../helpers/database');
+const { authenticateJWT } = require('../../../src/middleware/auth.middleware');
+const { authorize } = require('../../../src/middleware/authorize');
+const { ROLES } = require('../../../src/constants/roles');
 
 describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
   setupTestDB();
+
+  let rbacTestAgent;
+
+  beforeAll(() => {
+    const testApp = express();
+    testApp.use(express.json());
+
+    testApp.get('/api/rbac-test/admin-only', authenticateJWT, authorize(ROLES.ADMIN), (req, res) => {
+      res.status(200).json({ message: 'Admin access granted' });
+    });
+
+    testApp.get('/api/rbac-test/staff-or-admin', authenticateJWT, authorize(ROLES.STAFF, ROLES.ADMIN), (req, res) => {
+      res.status(200).json({ message: 'Staff or Admin access granted' });
+    });
+
+    rbacTestAgent = request(testApp);
+  });
 
   const adminUser = {
     name: 'Admin User',
@@ -30,7 +52,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
   let userToken;
 
   beforeEach(async () => {
-    // Register and login Admin
+    // Register and login Admin via main application
     await getTestAgent().post('/api/auth/register').send(adminUser);
     const adminLogin = await getTestAgent().post('/api/auth/login').send({
       email: adminUser.email,
@@ -57,7 +79,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
 
   describe('Administrator Access (Admin Only Route)', () => {
     it('should allow access to admin user on admin-only route and return 200 OK', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/admin-only')
         .set('Authorization', `Bearer ${adminToken}`);
 
@@ -66,7 +88,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
     });
 
     it('should deny access to staff user on admin-only route with 403 Forbidden', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/admin-only')
         .set('Authorization', `Bearer ${staffToken}`);
 
@@ -75,7 +97,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
     });
 
     it('should deny access to standard user on admin-only route with 403 Forbidden', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/admin-only')
         .set('Authorization', `Bearer ${userToken}`);
 
@@ -86,7 +108,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
 
   describe('Staff & Admin Access (Staff Or Admin Route)', () => {
     it('should allow access to staff user on staff-or-admin route and return 200 OK', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/staff-or-admin')
         .set('Authorization', `Bearer ${staffToken}`);
 
@@ -95,7 +117,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
     });
 
     it('should allow access to admin user on staff-or-admin route and return 200 OK', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/staff-or-admin')
         .set('Authorization', `Bearer ${adminToken}`);
 
@@ -104,7 +126,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
     });
 
     it('should return 403 Forbidden for standard user on staff-or-admin route due to insufficient permissions', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/staff-or-admin')
         .set('Authorization', `Bearer ${userToken}`);
 
@@ -115,7 +137,7 @@ describe('Role-Based Access Control (RBAC) Integration Test Suite', () => {
 
   describe('Missing Authentication & Unauthenticated Requests', () => {
     it('should return 401 Unauthorized when authorization header is missing on protected route', async () => {
-      const response = await getTestAgent()
+      const response = await rbacTestAgent
         .get('/api/rbac-test/admin-only');
 
       expect(response.status).toBe(401);

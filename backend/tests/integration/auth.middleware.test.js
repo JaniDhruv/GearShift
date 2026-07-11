@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { getTestAgent } = require('../helpers/app');
 const { setupTestDB } = require('../helpers/database');
-const { JWT_SECRET } = require('../../src/utils/auth.utils');
+const { JWT_SECRET } = require('../../src/utils/jwt.utils');
 
 describe('JWT Authentication Middleware Integration Test Suite (GET /api/auth/me)', () => {
   setupTestDB();

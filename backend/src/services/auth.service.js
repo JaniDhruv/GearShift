@@ -1,5 +1,6 @@
 const userRepository = require('../repositories/user.repository');
-const { hashPassword, comparePassword, generateToken } = require('../utils/auth.utils');
+const { hashPassword, comparePassword } = require('../utils/password.utils');
+const { generateToken } = require('../utils/jwt.utils');
 
 /**
  * Transforms a User document into a safe client DTO without password

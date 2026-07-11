@@ -1,6 +1,6 @@
 const userRepository = require('../repositories/user.repository');
 const { sanitizeUser } = require('../services/auth.service');
-const { extractBearerToken, verifyToken } = require('../utils/auth.utils');
+const { extractBearerToken, verifyToken } = require('../utils/jwt.utils');
 
 /**
  * JWT Authentication Middleware
