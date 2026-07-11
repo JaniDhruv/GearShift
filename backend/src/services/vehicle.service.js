@@ -1,4 +1,5 @@
 const vehicleRepository = require('../repositories/vehicle.repository');
+const { buildVehicleSearchQuery } = require('../utils/searchQueryBuilder');
 
 /**
  * Transforms a Vehicle document into a safe client DTO
@@ -45,33 +46,10 @@ const getAllVehicles = async () => {
 };
 
 /**
- * Searches vehicles based on flexible criteria
+ * Searches vehicles based on flexible criteria using dynamic query builder
  */
 const searchVehicles = async (query = {}) => {
-  const filter = {};
-
-  if (query.make) {
-    filter.make = new RegExp(`^${query.make}$`, 'i');
-  }
-
-  if (query.model) {
-    filter.model = new RegExp(`^${query.model}$`, 'i');
-  }
-
-  if (query.category) {
-    filter.category = query.category;
-  }
-
-  if (query.minPrice !== undefined || query.maxPrice !== undefined) {
-    filter.price = {};
-    if (query.minPrice !== undefined) {
-      filter.price.$gte = Number(query.minPrice);
-    }
-    if (query.maxPrice !== undefined) {
-      filter.price.$lte = Number(query.maxPrice);
-    }
-  }
-
+  const filter = buildVehicleSearchQuery(query);
   const vehicles = await vehicleRepository.findWithFilter(filter);
   return vehicles.map(sanitizeVehicle);
 };
