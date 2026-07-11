@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const healthRoutes = require('./routes/health.routes');
 const authRoutes = require('./routes/auth.routes');
+const vehicleRoutes = require('./routes/vehicle.routes');
 const notFoundHandler = require('./middleware/notFound.middleware');
 const errorHandler = require('./middleware/error.middleware');
 
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 // Routes
 app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/vehicles', vehicleRoutes);
 
 // Handle unknown routes (404 Not Found)
 app.use(notFoundHandler);
