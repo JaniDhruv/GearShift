@@ -39,7 +39,12 @@ const login = async (req, res, next) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  return res.status(200).json({ user: req.user });
+};
+
 module.exports = {
   register,
-  login
+  login,
+  getCurrentUser
 };

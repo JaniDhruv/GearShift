@@ -8,6 +8,10 @@ const findByEmail = async (email) => {
   return User.findOne({ email: email.toLowerCase() });
 };
 
+const findById = async (id) => {
+  return User.findById(id);
+};
+
 const create = async (userData) => {
   const user = new User(userData);
   return user.save();
@@ -15,5 +19,6 @@ const create = async (userData) => {
 
 module.exports = {
   findByEmail,
+  findById,
   create
 };
