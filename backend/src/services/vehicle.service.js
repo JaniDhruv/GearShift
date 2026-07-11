@@ -44,9 +44,18 @@ const getAllVehicles = async () => {
   return vehicles.map(sanitizeVehicle);
 };
 
+/**
+ * Updates a vehicle by ID
+ */
+const updateVehicleById = async (id, updateData) => {
+  const updated = await vehicleRepository.updateById(id, updateData);
+  return sanitizeVehicle(updated);
+};
+
 module.exports = {
   createVehicle,
   getVehicleById,
   getAllVehicles,
+  updateVehicleById,
   sanitizeVehicle
 };
