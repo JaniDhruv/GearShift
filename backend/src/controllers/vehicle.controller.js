@@ -42,6 +42,18 @@ const getVehicles = async (req, res, next) => {
 };
 
 /**
+ * Searches inventory based on criteria
+ */
+const searchVehicles = async (req, res, next) => {
+  try {
+    const vehicles = await vehicleService.searchVehicles(req.query);
+    return res.status(200).json({ vehicles });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/**
  * Updates an existing vehicle by ID
  */
 const updateVehicle = async (req, res, next) => {
@@ -76,6 +88,7 @@ const deleteVehicle = async (req, res, next) => {
 module.exports = {
   createVehicle,
   getVehicles,
+  searchVehicles,
   updateVehicle,
   deleteVehicle
 };

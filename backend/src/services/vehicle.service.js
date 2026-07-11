@@ -45,6 +45,38 @@ const getAllVehicles = async () => {
 };
 
 /**
+ * Searches vehicles based on flexible criteria
+ */
+const searchVehicles = async (query = {}) => {
+  const filter = {};
+
+  if (query.make) {
+    filter.make = new RegExp(`^${query.make}$`, 'i');
+  }
+
+  if (query.model) {
+    filter.model = new RegExp(`^${query.model}$`, 'i');
+  }
+
+  if (query.category) {
+    filter.category = query.category;
+  }
+
+  if (query.minPrice !== undefined || query.maxPrice !== undefined) {
+    filter.price = {};
+    if (query.minPrice !== undefined) {
+      filter.price.$gte = Number(query.minPrice);
+    }
+    if (query.maxPrice !== undefined) {
+      filter.price.$lte = Number(query.maxPrice);
+    }
+  }
+
+  const vehicles = await vehicleRepository.findWithFilter(filter);
+  return vehicles.map(sanitizeVehicle);
+};
+
+/**
  * Updates a vehicle by ID
  */
 const updateVehicleById = async (id, updateData) => {
@@ -64,6 +96,7 @@ module.exports = {
   createVehicle,
   getVehicleById,
   getAllVehicles,
+  searchVehicles,
   updateVehicleById,
   deleteVehicleById,
   sanitizeVehicle

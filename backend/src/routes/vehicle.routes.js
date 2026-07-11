@@ -2,12 +2,13 @@ const express = require('express');
 const { authenticateJWT } = require('../middleware/auth.middleware');
 const { authorize } = require('../middleware/authorize');
 const { validateVehicleId, validateVehicleCreation, validateVehicleUpdate } = require('../validators/vehicle.validator');
-const { createVehicle, getVehicles, updateVehicle, deleteVehicle } = require('../controllers/vehicle.controller');
+const { createVehicle, getVehicles, searchVehicles, updateVehicle, deleteVehicle } = require('../controllers/vehicle.controller');
 const { ROLES } = require('../constants/roles');
 
 const router = express.Router();
 
 router.get('/', getVehicles);
+router.get('/search', searchVehicles);
 
 router.post(
   '/',
