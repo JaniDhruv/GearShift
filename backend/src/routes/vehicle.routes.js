@@ -2,7 +2,7 @@ const express = require('express');
 const { authenticateJWT } = require('../middleware/auth.middleware');
 const { authorize } = require('../middleware/authorize');
 const { validateVehicleId, validateVehicleCreation, validateVehicleUpdate } = require('../validators/vehicle.validator');
-const { createVehicle, getVehicles, updateVehicle } = require('../controllers/vehicle.controller');
+const { createVehicle, getVehicles, updateVehicle, deleteVehicle } = require('../controllers/vehicle.controller');
 const { ROLES } = require('../constants/roles');
 
 const router = express.Router();
@@ -24,6 +24,14 @@ router.put(
   validateVehicleId,
   validateVehicleUpdate,
   updateVehicle
+);
+
+router.delete(
+  '/:id',
+  authenticateJWT,
+  authorize(ROLES.ADMIN),
+  validateVehicleId,
+  deleteVehicle
 );
 
 module.exports = router;

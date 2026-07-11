@@ -21,9 +21,14 @@ const updateById = async (id, updateData) => {
   return Vehicle.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
 };
 
+const deleteById = async (id) => {
+  return Vehicle.findByIdAndDelete(id);
+};
+
 module.exports = {
   create,
   findById,
   findAll,
-  updateById
+  updateById,
+  deleteById
 };

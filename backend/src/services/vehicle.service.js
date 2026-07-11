@@ -52,10 +52,19 @@ const updateVehicleById = async (id, updateData) => {
   return sanitizeVehicle(updated);
 };
 
+/**
+ * Deletes a vehicle by ID
+ */
+const deleteVehicleById = async (id) => {
+  const deleted = await vehicleRepository.deleteById(id);
+  return sanitizeVehicle(deleted);
+};
+
 module.exports = {
   createVehicle,
   getVehicleById,
   getAllVehicles,
   updateVehicleById,
+  deleteVehicleById,
   sanitizeVehicle
 };

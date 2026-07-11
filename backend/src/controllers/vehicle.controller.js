@@ -54,8 +54,27 @@ const updateVehicle = async (req, res, next) => {
   }
 };
 
+/**
+ * Deletes an existing vehicle by ID
+ */
+const deleteVehicle = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const vehicle = await vehicleService.deleteVehicleById(id);
+    if (!vehicle) {
+      return res.status(404).json({ error: 'Vehicle not found' });
+    }
+
+    return res.status(200).json({ message: 'Vehicle deleted successfully', vehicle });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   createVehicle,
   getVehicles,
-  updateVehicle
+  updateVehicle,
+  deleteVehicle
 };
