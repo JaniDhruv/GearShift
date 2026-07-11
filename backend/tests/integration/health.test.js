@@ -1,10 +1,9 @@
-const request = require('supertest');
-const app = require('../../src/app');
+const { getTestAgent } = require('../helpers/app');
 
 describe('Health Endpoint Integration Test', () => {
   describe('GET /health', () => {
     it('should return 200 OK along with system health status', async () => {
-      const response = await request(app).get('/health');
+      const response = await getTestAgent().get('/health');
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('status');
