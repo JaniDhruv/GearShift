@@ -1,11 +1,22 @@
-/**
- * Structured Logger Utility
- *
- * Clean Architecture Layer: Infrastructure / Cross-Cutting
- *
- * Responsibilities:
- * - Provide consistent logging interface (error, warn, info, debug)
- * - Support environment-aware log formatting
- *
- * Note: Will be implemented incrementally via TDD.
- */
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: process.env.NODE_ENV === 'development'
+        ? winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
+          )
+        : winston.format.json()
+    })
+  ],
+  silent: process.env.NODE_ENV === 'test'
+});
+
+module.exports = logger;
