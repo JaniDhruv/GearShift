@@ -23,6 +23,19 @@ const createVehicle = async (req, res, next) => {
   }
 };
 
+/**
+ * Retrieves all vehicles
+ */
+const getVehicles = async (req, res, next) => {
+  try {
+    const vehicles = await vehicleService.getAllVehicles();
+    return res.status(200).json({ vehicles });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
-  createVehicle
+  createVehicle,
+  getVehicles
 };

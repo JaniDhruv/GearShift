@@ -13,7 +13,12 @@ const findById = async (id) => {
   return Vehicle.findById(id);
 };
 
+const findAll = async () => {
+  return Vehicle.find();
+};
+
 module.exports = {
   create,
-  findById
+  findById,
+  findAll
 };
