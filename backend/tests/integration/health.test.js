@@ -1,6 +1,9 @@
 const { getTestAgent } = require('../helpers/app');
+const { setupTestDB } = require('../helpers/database');
 
 describe('Health Endpoint Integration Test', () => {
+  setupTestDB();
+
   describe('GET /health', () => {
     it('should return 200 OK along with system health status', async () => {
       const response = await getTestAgent().get('/health');
