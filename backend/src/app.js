@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const healthRoutes = require('./routes/health.routes');
+const authRoutes = require('./routes/auth.routes');
 const notFoundHandler = require('./middleware/notFound.middleware');
 const errorHandler = require('./middleware/error.middleware');
 
@@ -25,8 +26,9 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Health check endpoint
+// Routes
 app.use('/health', healthRoutes);
+app.use('/api/auth', authRoutes);
 
 // Handle unknown routes (404 Not Found)
 app.use(notFoundHandler);
