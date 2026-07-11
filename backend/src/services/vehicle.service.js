@@ -85,6 +85,20 @@ const purchaseVehicleById = async (id) => {
   return { vehicle: sanitizeVehicle(updated) };
 };
 
+/**
+ * Restocks a vehicle inventory by increasing quantity
+ */
+const restockVehicleById = async (id, quantityToAdd) => {
+  const vehicle = await vehicleRepository.findById(id);
+  if (!vehicle) {
+    return null;
+  }
+  const updated = await vehicleRepository.updateById(id, {
+    quantity: vehicle.quantity + Number(quantityToAdd)
+  });
+  return sanitizeVehicle(updated);
+};
+
 module.exports = {
   createVehicle,
   getVehicleById,
@@ -93,5 +107,6 @@ module.exports = {
   updateVehicleById,
   deleteVehicleById,
   purchaseVehicleById,
+  restockVehicleById,
   sanitizeVehicle
 };

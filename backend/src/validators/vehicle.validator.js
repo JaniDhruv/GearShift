@@ -64,8 +64,20 @@ const validateVehicleUpdate = (req, res, next) => {
   return next();
 };
 
+/**
+ * Express middleware to validate restock quantity payload
+ */
+const validateRestockPayload = (req, res, next) => {
+  const { quantity } = req.body;
+  if (typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity <= 0) {
+    return res.status(400).json({ error: 'Restock quantity must be a positive integer' });
+  }
+  return next();
+};
+
 module.exports = {
   validateVehicleId,
   validateVehicleCreation,
-  validateVehicleUpdate
+  validateVehicleUpdate,
+  validateRestockPayload
 };
