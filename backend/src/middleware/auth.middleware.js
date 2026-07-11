@@ -1,23 +1,20 @@
-const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user.repository');
 const { sanitizeUser } = require('../services/auth.service');
-const { JWT_SECRET } = require('../utils/auth.utils');
+const { extractBearerToken, verifyToken } = require('../utils/auth.utils');
 
 /**
  * JWT Authentication Middleware
  * Clean Architecture Layer: Interface Adapters (Security Middleware)
  */
 const authenticateJWT = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = extractBearerToken(req);
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     return res.status(401).json({ error: 'Authentication token required' });
   }
 
-  const token = authHeader.split(' ')[1];
-
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = verifyToken(token);
     const existingUser = await userRepository.findById(payload.id);
 
     if (!existingUser) {
