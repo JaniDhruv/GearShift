@@ -15,7 +15,15 @@ app.use(helmet());
 
 // Cross-Origin Resource Sharing configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*'
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl) or localhost/dev origins
+    if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      callback(null, true);
+    } else {
+      callback(null, process.env.CORS_ORIGIN || true);
+    }
+  },
+  credentials: true,
 }));
 
 // Request body parsing middleware
