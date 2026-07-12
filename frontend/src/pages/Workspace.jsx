@@ -184,6 +184,33 @@ export default function Workspace() {
         </div>
       </div>
 
+      {/* Workspace Overview Banner */}
+      {!isLoading && !isError && vehicles.length > 0 && (
+        <div className="bg-gray-900/40 border-b border-gray-800/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-gray-400">
+            <div className="flex items-center gap-6">
+              <span>
+                Total Listings: <strong className="text-white">{vehicles.length}</strong>
+              </span>
+              <span>
+                In Stock Units:{' '}
+                <strong className="text-white">
+                  {vehicles.reduce((sum, v) => sum + v.quantity, 0)}
+                </strong>
+              </span>
+            </div>
+            <span>
+              Portfolio MSRP Value:{' '}
+              <strong className="text-emerald-400">
+                ${vehicles
+                  .reduce((sum, v) => sum + v.price * v.quantity, 0)
+                  .toLocaleString('en-US')}
+              </strong>
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         {isLoading && (
