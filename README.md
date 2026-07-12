@@ -193,17 +193,29 @@ All protected routes require an Authorization header: `Authorization: Bearer <JW
 
 Below are actual visual previews of GearShift running against seeded Indian market inventory (`Mercedes-Benz E-Class E350d`, `Tata Nexon`, `Mahindra Scorpio-N`, and `Tata Tiago EV`).
 
-### 1. Showroom & Dynamic Fleet Grid
-![GearShift Showroom Dashboard](./docs/screenshots/showroom.png)
-*Displays real-time stock levels, localized INR (`₹`) prices, and interactive Purchase actions. Notice that zero-stock vehicles like the seeded **Mahindra Scorpio-N** render an immediate disabled state.*
+### 1. Showroom & Dynamic Fleet Grid (Admin View)
+![GearShift Showroom Dashboard](./docs/screenshots/home-page-admin.png)
+*Displays real-time stock levels, localized INR (`₹`) prices, and interactive Purchase actions.*
 
-### 2. Multi-Criteria Search & Filter Interface
-![GearShift Search and Filter Interface](./docs/screenshots/search-filter.png)
-*Allows users to instantly filter across makes (**Tata, Mahindra, Maruti Suzuki, Hyundai, Toyota, BYD, Mercedes-Benz, BMW**), categories (**SUV, SEDAN, ELECTRIC, HYBRID, LUXURY, SPORTS, HATCHBACK**), and custom Rupee price bands.*
+### 2. Inventory Catalog & Vehicle Management
+![GearShift Inventory Page](./docs/screenshots/inventory-page-admin.png)
+*Allows instant filtering across makes (**Tata, Mahindra, Maruti Suzuki, Hyundai, Toyota, BYD, Mercedes-Benz, BMW**), categories (**SUV, SEDAN, ELECTRIC, HYBRID, LUXURY, SPORTS, HATCHBACK**), and custom Rupee price bands.*
 
-### 3. Role-Protected Admin Management Portal
-![GearShift Admin Management Portal](./docs/screenshots/admin-portal.png)
-*Provides administrators with intuitive modals for restocking inventory counts and managing showroom catalog data.*
+### 3. Dealership Operations Workspace
+![GearShift Workspace](./docs/screenshots/workspace-page-admin.png)
+*Operational dashboard for monitoring showroom inventory metrics and fast actions.*
+
+### 4. Role-Protected Administration Portal
+![GearShift Administration Portal](./docs/screenshots/administration-page-admin.png)
+*Provides administrators with full management tools for restocking inventory counts and modifying showroom catalog data.*
+
+### 5. Secure Authentication Portal (Login)
+![GearShift Login Page](./docs/screenshots/login-page.png)
+*JWT-based secure login interface for Admins, Staff, and Customers.*
+
+### 6. Account Registration
+![GearShift Registration Page](./docs/screenshots/registration-page.png)
+*Clean user onboarding interface with role-aware registration.*
 
 ---
 
