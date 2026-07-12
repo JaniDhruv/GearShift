@@ -1,10 +1,12 @@
 # GearShift — Car Dealership Inventory System
 
+[![Live Frontend Demo](https://img.shields.io/badge/Live%20App-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://gearshift-dealership.vercel.app/)
+[![Live Backend API](https://img.shields.io/badge/Live%20API-Render-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://gearshift-backend-fjbu.onrender.com)
+[![Swagger API Docs](https://img.shields.io/badge/Interactive%20Docs-Swagger%20OpenAPI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://gearshift-backend-fjbu.onrender.com/api-docs)
 [![TDD Kata](https://img.shields.io/badge/TDD%20Kata-Passed-00C853?style=for-the-badge&logo=jest&logoColor=white)](https://github.com/JaniDhruv/GearShift)
 [![Stack MERN](https://img.shields.io/badge/Stack-MERN%20%28MongoDB%2C%20Express%2C%20React%2C%20Node%29-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Vite + Tailwind CSS](https://img.shields.io/badge/Frontend-Vite%20%2B%20Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Swagger API Docs](https://img.shields.io/badge/OpenAPI-Interactive%20Docs-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](http://localhost:5000/api-docs)
 
 > A modern, robust, full-stack **Car Dealership Inventory System** built from scratch using strict **Test-Driven Development (TDD)**, **SOLID Principles**, clean layered architecture, and **Extreme Programming (XP)** practices. All vehicle pricing and inventory models are seeded with authentic Indian Market showroom catalog data in **Indian Rupees (₹)**.
 
@@ -310,8 +312,11 @@ Co-authored-by: Antigravity AI <antigravity@example.com>"
 
 ## 🌐 Deployment & Production Details
 
-- **Frontend Build**: Built for production deployment using `npm run build` inside `frontend/` (compatible with Vercel, Netlify, or Cloudflare Pages).
-- **Backend Deployment**: Stateless Node.js/Express server ready for deployment on Render, Heroku, AWS ECS, or Fly.io with MongoDB Atlas connection string configured via environment variables.
+The application is deployed live and fully interactive:
+
+- **Frontend Application (Live SPA)**: Hosted on Vercel at **[https://gearshift-dealership.vercel.app/](https://gearshift-dealership.vercel.app/)**
+- **Backend API Server**: Hosted on Render at **[https://gearshift-backend-fjbu.onrender.com](https://gearshift-backend-fjbu.onrender.com)**
+- **Interactive OpenAPI / Swagger Documentation**: All backend REST APIs are documented using OpenAPI / Swagger specification. You can test and inspect endpoints live directly from your browser at **[https://gearshift-backend-fjbu.onrender.com/api-docs](https://gearshift-backend-fjbu.onrender.com/api-docs)**
 
 ---
 
