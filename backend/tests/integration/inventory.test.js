@@ -149,13 +149,14 @@ describe('Inventory Operations Integration Test Suite', () => {
         expect(response.body).toHaveProperty('error');
       });
 
-      it('should return 403 Forbidden when standard user attempts to record a sale', async () => {
+      it('should allow standard USER to record a sale and decrement vehicle quantity by 1', async () => {
         const response = await getTestAgent()
           .post(`/api/vehicles/${inStockVehicleId}/purchase`)
           .set('Authorization', `Bearer ${userToken}`);
 
-        expect(response.status).toBe(403);
-        expect(response.body).toHaveProperty('error');
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('vehicle');
+        expect(response.body.vehicle.quantity).toBe(4);
       });
     });
   });
