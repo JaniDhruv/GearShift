@@ -186,20 +186,28 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
 
         {/* Footer actions */}
         <div className="px-6 py-4 border-t border-gray-800 flex items-center gap-3">
-          {isStaffOrAdmin && (
-            <button
-              onClick={() => purchaseMutation.mutate()}
-              disabled={!inStock || isAnyMutating}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20"
-            >
-              {purchaseMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <ShoppingCart className="w-4 h-4" />
-              )}
-              {!inStock ? 'Out of Stock' : 'Record Sale'}
-            </button>
-          )}
+          <button
+            onClick={() => {
+              if (onPurchaseClick) {
+                onPurchaseClick(vehicle);
+              } else {
+                purchaseMutation.mutate();
+              }
+            }}
+            disabled={!inStock || isAnyMutating}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-gray-950 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20"
+          >
+            {purchaseMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <ShoppingCart className="w-4 h-4" />
+            )}
+            {!inStock
+              ? 'Out of Stock'
+              : isStaffOrAdmin
+              ? 'Record Sale'
+              : 'Purchase'}
+          </button>
 
           {isAdmin && (
             <button
@@ -218,12 +226,6 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
               )}
               Delete
             </button>
-          )}
-
-          {!isStaffOrAdmin && (
-            <p className="text-sm text-gray-500 flex-1 text-center">
-              Sign in as staff or admin to manage vehicles.
-            </p>
           )}
         </div>
       </div>

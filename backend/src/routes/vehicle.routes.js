@@ -34,7 +34,7 @@ router.post(
 router.post(
   '/:id/purchase',
   authenticateJWT,
-  authorize(ROLES.STAFF, ROLES.ADMIN),
+  authorize(ROLES.USER, ROLES.STAFF, ROLES.ADMIN),
   validateVehicleId,
   purchaseVehicle
 );

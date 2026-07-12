@@ -1,4 +1,6 @@
 import React from 'react';
+import { ShoppingCart } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CATEGORY_STYLES = {
   SEDAN:    { color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', dot: 'bg-blue-400' },
@@ -16,10 +18,21 @@ const CATEGORY_ICONS = {
   SPORTS: '🏎️', LUXURY: '🏅', ELECTRIC: '⚡', HYBRID: '🌿',
 };
 
-export default function VehicleCard({ vehicle, onClick }) {
+export default function VehicleCard({ vehicle, onClick, onPurchaseClick }) {
+  const { user } = useAuth();
+  const isStaffOrAdmin = user?.role === 'staff' || user?.role === 'admin';
+
   const style = CATEGORY_STYLES[vehicle.category] || CATEGORY_STYLES.SEDAN;
   const icon = CATEGORY_ICONS[vehicle.category] || '🚗';
   const inStock = vehicle.quantity > 0;
+  const isLowStock = vehicle.quantity > 0 && vehicle.quantity <= 3;
+
+  const handleActionClick = (e) => {
+    e.stopPropagation();
+    if (inStock && onPurchaseClick) {
+      onPurchaseClick(vehicle);
+    }
+  };
 
   return (
     <article
@@ -28,7 +41,7 @@ export default function VehicleCard({ vehicle, onClick }) {
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.(vehicle)}
-      aria-label={`View details for ${vehicle.year ?? ''} ${vehicle.make} ${vehicle.model}`}
+      aria-label={`View details for ${vehicle.make} ${vehicle.model}`}
     >
       {/* Header row */}
       <div className="flex items-start justify-between gap-2">
@@ -47,28 +60,53 @@ export default function VehicleCard({ vehicle, onClick }) {
           </div>
         </div>
 
-        {/* Stock badge */}
-        {inStock ? (
-          <span className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-            {vehicle.quantity} in stock
+        {/* Urgency & Availability Badge */}
+        {!inStock ? (
+          <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+            <span>🔴</span> Out of Stock
+          </span>
+        ) : isLowStock ? (
+          <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
+            <span>🟡</span> Low Stock ({vehicle.quantity})
           </span>
         ) : (
-          <span className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
-            Out of stock
+          <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <span>🟢</span> In Stock ({vehicle.quantity})
           </span>
         )}
       </div>
 
       {/* Price */}
-      <div className="mt-auto">
+      <div>
         <p className="text-xl font-bold text-white tracking-tight">
           ${vehicle.price.toLocaleString('en-US')}
         </p>
         <p className="text-xs text-gray-500 mt-0.5">MSRP</p>
       </div>
 
+      {/* Primary Role-Aware Action Button */}
+      <div className="mt-auto pt-2 border-t border-gray-800/80">
+        <button
+          type="button"
+          onClick={handleActionClick}
+          disabled={!inStock}
+          className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${
+            !inStock
+              ? 'bg-gray-800 border border-gray-700/60 text-gray-500 cursor-not-allowed'
+              : 'bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-gray-950 shadow-emerald-500/20'
+          }`}
+        >
+          <ShoppingCart className="w-4 h-4" />
+          {!inStock
+            ? 'Out of Stock'
+            : isStaffOrAdmin
+            ? 'Record Sale'
+            : 'Purchase'}
+        </button>
+      </div>
+
       {/* Hover cue */}
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-b-2xl" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-b-2xl pointer-events-none" />
     </article>
   );
 }

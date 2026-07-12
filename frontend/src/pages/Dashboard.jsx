@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Car, AlertCircle, RefreshCw } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getVehicles, searchVehicles } from '../services/vehicleService';
+import { getVehicles, searchVehicles, purchaseVehicle } from '../services/vehicleService';
 import useDebounce from '../hooks/useDebounce';
 import VehicleCard from '../components/ui/VehicleCard';
 import LoadingSkeleton from '../components/ui/LoadingSkeleton';
 import EmptyState from '../components/ui/EmptyState';
 import SearchBar from '../components/ui/SearchBar';
 import VehicleDetailModal from '../components/ui/VehicleDetailModal';
+import PurchaseConfirmModal from '../components/ui/PurchaseConfirmModal';
 import FilterPanel from '../components/ui/FilterPanel';
+import toast from 'react-hot-toast';
 
 const EMPTY_FILTERS = { category: '', minPrice: '', maxPrice: '' };
 
@@ -29,9 +31,13 @@ const STATS_CONFIG = [
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const isStaffOrAdmin = user?.role === 'staff' || user?.role === 'admin';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [purchaseVehicleTarget, setPurchaseVehicleTarget] = useState(null);
 
   const debouncedSearch = useDebounce(searchTerm, 400);
 
@@ -41,7 +47,6 @@ export default function Dashboard() {
   // Build query params for /vehicles/search
   const searchParams = {
     ...(debouncedSearch.trim() && {
-      // Try matching both make and model with the same term
       make: debouncedSearch.trim(),
     }),
     ...(filters.category && { category: filters.category }),
@@ -60,6 +65,36 @@ export default function Dashboard() {
     queryFn: isFiltering ? () => searchVehicles(searchParams) : getVehicles,
     staleTime: 30 * 1000,
     keepPreviousData: true,
+  });
+
+  const purchaseMutation = useMutation({
+    mutationFn: (id) => purchaseVehicle(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['vehicles'] });
+      const previousVehicles = queryClient.getQueryData(['vehicles']);
+
+      queryClient.setQueryData(['vehicles'], (old = []) =>
+        old.map((v) => (v.id === id ? { ...v, quantity: Math.max(0, v.quantity - 1) } : v))
+      );
+
+      return { previousVehicles };
+    },
+    onError: (err, id, context) => {
+      if (context?.previousVehicles) {
+        queryClient.setQueryData(['vehicles'], context.previousVehicles);
+      }
+      const msg = err?.response?.data?.error || 'Purchase failed. Please try again.';
+      toast.error(msg);
+    },
+    onSuccess: () => {
+      toast.success(
+        isStaffOrAdmin ? 'Vehicle sale recorded successfully.' : 'Vehicle purchased successfully.'
+      );
+      setPurchaseVehicleTarget(null);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+    },
   });
 
   const handleReset = () => {
@@ -164,6 +199,7 @@ export default function Dashboard() {
                   key={vehicle.id}
                   vehicle={vehicle}
                   onClick={setSelectedVehicle}
+                  onPurchaseClick={setPurchaseVehicleTarget}
                 />
               ))}
             </div>
@@ -176,9 +212,22 @@ export default function Dashboard() {
         <VehicleDetailModal
           vehicle={selectedVehicle}
           onClose={() => setSelectedVehicle(null)}
+          onPurchaseClick={(v) => {
+            setSelectedVehicle(null);
+            setPurchaseVehicleTarget(v);
+          }}
         />
       )}
+
+      {/* Customer Purchase / Staff Record Sale Confirmation Modal */}
+      <PurchaseConfirmModal
+        isOpen={Boolean(purchaseVehicleTarget)}
+        onClose={() => setPurchaseVehicleTarget(null)}
+        onConfirm={() => purchaseMutation.mutate(purchaseVehicleTarget.id)}
+        vehicle={purchaseVehicleTarget}
+        isStaffOrAdmin={isStaffOrAdmin}
+        isPending={purchaseMutation.isPending}
+      />
     </div>
   );
 }
-
