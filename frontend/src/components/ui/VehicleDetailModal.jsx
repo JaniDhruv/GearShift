@@ -140,14 +140,14 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
             <DetailRow icon={Shield} label="Category" value={vehicle.category} />
             <DetailRow
               icon={DollarSign}
-              label="Price"
-              value={`$${vehicle.price.toLocaleString('en-US')}`}
+              label="Ex-Showroom Price"
+              value={`₹${vehicle.price.toLocaleString('en-IN')}`}
             />
             <DetailRow icon={Package} label="Stock Quantity" value={vehicle.quantity} />
             <DetailRow
               icon={Calendar}
               label="Added"
-              value={new Date(vehicle.createdAt).toLocaleDateString('en-US', {
+              value={new Date(vehicle.createdAt).toLocaleDateString('en-IN', {
                 year: 'numeric', month: 'short', day: 'numeric',
               })}
             />
