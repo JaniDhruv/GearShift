@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Car, LayoutDashboard, Shield, LogIn, UserPlus } from 'lucide-react';
+import { Car, LayoutDashboard, Shield, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Navbar() {
+  const { isAuthenticated, logout, user } = useAuth();
+
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
       isActive
@@ -41,20 +44,39 @@ export default function Navbar() {
 
           {/* Auth Actions */}
           <div className="flex items-center gap-3">
-            <Link
-              to="/login"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-colors"
-            >
-              <LogIn className="w-4 h-4" />
-              Sign In
-            </Link>
-            <Link
-              to="/register"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-500 hover:bg-emerald-600 text-gray-950 shadow-md shadow-emerald-500/20 transition-all"
-            >
-              <UserPlus className="w-4 h-4" />
-              Register
-            </Link>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                {user?.name && (
+                  <span className="text-sm font-medium text-gray-300 hidden sm:inline">
+                    {user.name}
+                  </span>
+                )}
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-500 hover:bg-emerald-600 text-gray-950 shadow-md shadow-emerald-500/20 transition-all"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
