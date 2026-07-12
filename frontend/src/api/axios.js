@@ -1,0 +1,34 @@
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
+});
+
+// Request interceptor for attaching authentication token if present
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for standardized error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Architectural foundation for centralized API error handling
+    return Promise.reject(error);
+  }
+);
+
+export default api;
