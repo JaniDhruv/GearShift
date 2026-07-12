@@ -34,9 +34,9 @@ export default function Navbar() {
             <NavLink to="/" className={navLinkClass}>
               Home
             </NavLink>
-            <NavLink to="/dashboard" className={navLinkClass}>
-              <LayoutDashboard className="w-4 h-4" />
-              Dashboard
+            <NavLink to="/inventory" className={navLinkClass}>
+              <Car className="w-4 h-4" />
+              Inventory
             </NavLink>
             {isStaffOrAdmin && (
               <NavLink to="/workspace" className={navLinkClass}>
@@ -47,7 +47,7 @@ export default function Navbar() {
             {isAdmin && (
               <NavLink to="/admin" className={navLinkClass}>
                 <Shield className="w-4 h-4" />
-                Admin
+                Administration
               </NavLink>
             )}
           </nav>
@@ -57,9 +57,14 @@ export default function Navbar() {
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 {user?.name && (
-                  <span className="text-sm font-medium text-gray-300 hidden sm:inline">
-                    {user.name}
-                  </span>
+                  <div className="flex items-center gap-2 hidden sm:flex">
+                    <span className="text-sm font-medium text-white">
+                      👤 {user.name}
+                    </span>
+                    <span className="text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-gray-800 text-emerald-400 border border-gray-700">
+                      {user.role}
+                    </span>
+                  </div>
                 )}
                 <button
                   onClick={logout}

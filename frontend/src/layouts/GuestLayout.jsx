@@ -9,7 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 export default function GuestLayout() {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
-  const redirectTo = location.state?.from?.pathname || '/dashboard';
+  const redirectTo = location.state?.from?.pathname || '/inventory';
 
   if (isLoading) {
     return (

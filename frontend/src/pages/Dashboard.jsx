@@ -109,9 +109,9 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">Inventory Dashboard</h1>
+              <h1 className="text-xl font-bold text-white tracking-tight">Vehicle Inventory</h1>
               <p className="text-sm text-gray-400 mt-0.5">
-                {user ? `Welcome back, ${user.name}` : 'Vehicle inventory overview'}
+                Browse ex-showroom pricing and real-time stock availability across India
               </p>
             </div>
             <button

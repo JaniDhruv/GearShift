@@ -31,7 +31,7 @@ export default function Register() {
       const { token, user } = await loginApi({ email: data.email, password: data.password });
       login(token, user);
       toast.success(`Welcome to GearShift, ${user.name}!`);
-      navigate('/dashboard', { replace: true });
+      navigate('/inventory', { replace: true });
     } catch (error) {
       const message = parseAuthError(error);
       setServerError(message);

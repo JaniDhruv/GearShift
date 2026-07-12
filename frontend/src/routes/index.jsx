@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import GuestLayout from '../layouts/GuestLayout';
 import ProtectedLayout from '../layouts/ProtectedLayout';
@@ -17,7 +17,11 @@ export default function AppRoutes() {
         {/* Public home */}
         <Route index element={<Home />} />
 
-        {/* Guest-only routes: redirect authenticated users to /dashboard */}
+        {/* Public or Protected Inventory route */}
+        <Route path="inventory" element={<Dashboard />} />
+        <Route path="dashboard" element={<Navigate to="/inventory" replace />} />
+
+        {/* Guest-only routes: redirect authenticated users to /inventory */}
         <Route element={<GuestLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />

@@ -28,7 +28,7 @@ export default function Login() {
       const { token, user } = await loginApi(data);
       login(token, user);
       toast.success(`Welcome back, ${user.name}!`);
-      navigate(from, { replace: true });
+      navigate(from || '/inventory', { replace: true });
     } catch (error) {
       const message = parseAuthError(error);
       setServerError(message);
