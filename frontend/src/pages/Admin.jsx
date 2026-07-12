@@ -26,8 +26,8 @@ export default function Admin() {
         <div className="anim-blob-4 absolute top-1/2 left-1/3 w-64 h-64 bg-blue-500/5 blur-3xl rounded-full" />
       </div>
 
-      {/* Sticky Header */}
-      <div className="border-b border-cream-200 bg-white/95 backdrop-blur-sm sticky top-[60px] z-30 shadow-card relative">
+      {/* Page Header */}
+      <div className="border-b border-cream-200 bg-white relative z-10 shadow-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">

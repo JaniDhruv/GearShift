@@ -139,7 +139,7 @@ export default function Workspace() {
       </div>
 
       {/* Workspace Header */}
-      <div className="border-b border-cream-200 bg-white/95 backdrop-blur-sm sticky top-[60px] z-30 shadow-card relative">
+      <div className="border-b border-cream-200 bg-white relative z-10 shadow-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between gap-4">
             <div>

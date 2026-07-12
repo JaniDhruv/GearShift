@@ -86,8 +86,8 @@ export default function Dashboard() {
         <div className="anim-blob-3 absolute bottom-20 -left-20 w-80 h-80 bg-blue-500/5 blur-3xl rounded-full" />
       </div>
 
-      {/* Sticky page header */}
-      <div className="border-b border-cream-200 bg-white/95 backdrop-blur-sm sticky top-[60px] z-30 shadow-card relative">
+      {/* Page header */}
+      <div className="border-b border-cream-200 bg-white relative z-10 shadow-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>

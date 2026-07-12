@@ -1,24 +1,24 @@
 import React from 'react';
 
 /**
- * Reusable SelectField component for form select inputs with consistent styling and error display.
+ * Reusable SelectField component for form select inputs with consistent light theme and error display.
  */
 export default function SelectField({
   id,
   label,
   options = [],
-  registration, // from react-hook-form register()
+  registration,
   error,
-  icon: Icon,
+  iconClass,
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1.5">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-700 mb-1.5">
         {label}
       </label>
       <div className="relative">
-        {Icon && (
-          <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+        {iconClass && (
+          <i className={`bx ${iconClass} absolute left-3.5 top-1/2 -translate-y-1/2 text-base text-ink-400 pointer-events-none`} />
         )}
         <select
           id={id}
@@ -26,18 +26,18 @@ export default function SelectField({
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${id}-error` : undefined}
           className={`w-full ${
-            Icon ? 'pl-10' : 'pl-4'
-          } pr-10 py-2.5 rounded-xl bg-gray-800/60 border text-sm text-white outline-none transition-all focus:ring-2 ${
+            iconClass ? 'pl-10' : 'pl-4'
+          } pr-10 py-2.5 rounded-xl bg-white border text-sm text-ink-900 outline-none transition-all focus:ring-2 ${
             error
-              ? 'border-red-500/60 focus:ring-red-500/30'
-              : 'border-gray-700 focus:border-emerald-500/60 focus:ring-emerald-500/20'
+              ? 'border-red-400 focus:ring-red-400/20'
+              : 'border-cream-200 focus:border-primary-400 focus:ring-primary-500/15'
           }`}
         >
           {options.map((opt) => (
             <option
               key={opt.value}
               value={opt.value}
-              className="bg-gray-900 text-white"
+              className="bg-white text-ink-900"
             >
               {opt.label}
             </option>
@@ -48,9 +48,9 @@ export default function SelectField({
         <p
           id={`${id}-error`}
           role="alert"
-          className="mt-1.5 text-xs text-red-400 flex items-center gap-1"
+          className="mt-1.5 text-xs text-red-500 flex items-center gap-1"
         >
-          <span>⚠</span>
+          <i className="bx bxs-error-circle text-sm" />
           {error.message}
         </p>
       )}
