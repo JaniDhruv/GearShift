@@ -1,8 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import MainLayout from './layouts/MainLayout';
+import AppRoutes from './routes';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,13 +27,8 @@ export default function App() {
         }}
       />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            {/* Foundational layout route configured for future page integration */}
-          </Route>
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </QueryClientProvider>
   );
 }
-
