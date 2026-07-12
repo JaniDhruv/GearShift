@@ -19,8 +19,15 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl) or localhost/dev origins
     if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
       callback(null, true);
+    } else if (!process.env.CORS_ORIGIN || process.env.CORS_ORIGIN === '*') {
+      callback(null, true);
     } else {
-      callback(null, process.env.CORS_ORIGIN || true);
+      const allowedOrigins = process.env.CORS_ORIGIN.split(',').map(o => o.trim());
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
     }
   },
   credentials: true,
