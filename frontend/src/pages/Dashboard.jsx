@@ -8,6 +8,7 @@ import VehicleCard from '../components/ui/VehicleCard';
 import LoadingSkeleton from '../components/ui/LoadingSkeleton';
 import EmptyState from '../components/ui/EmptyState';
 import SearchBar from '../components/ui/SearchBar';
+import VehicleDetailModal from '../components/ui/VehicleDetailModal';
 import FilterPanel from '../components/ui/FilterPanel';
 
 const EMPTY_FILTERS = { category: '', minPrice: '', maxPrice: '' };
@@ -169,6 +170,15 @@ export default function Dashboard() {
           </>
         )}
       </div>
+
+      {/* Vehicle detail modal */}
+      {selectedVehicle && (
+        <VehicleDetailModal
+          vehicle={selectedVehicle}
+          onClose={() => setSelectedVehicle(null)}
+        />
+      )}
     </div>
   );
 }
+
