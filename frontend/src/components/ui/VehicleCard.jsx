@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const CATEGORY_STYLES = {
@@ -89,16 +89,22 @@ export default function VehicleCard({ vehicle, onClick, onPurchaseClick }) {
         <button
           type="button"
           onClick={handleActionClick}
-          disabled={!inStock}
+          disabled={!inStock || !user}
           className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${
-            !inStock
-              ? 'bg-gray-800 border border-gray-700/60 text-gray-500 cursor-not-allowed'
+            !inStock || !user
+              ? 'bg-gray-800 border border-gray-700/60 text-gray-400 cursor-not-allowed'
               : 'bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-gray-950 shadow-emerald-500/20'
           }`}
         >
-          <ShoppingCart className="w-4 h-4" />
+          {!user && inStock ? (
+            <Lock className="w-4 h-4" />
+          ) : (
+            <ShoppingCart className="w-4 h-4" />
+          )}
           {!inStock
             ? 'Out of Stock'
+            : !user
+            ? 'Sign in to Purchase'
             : isStaffOrAdmin
             ? 'Record Sale'
             : 'Purchase'}

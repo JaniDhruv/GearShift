@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   X, Car, Tag, DollarSign, Package, Calendar,
-  ShoppingCart, RotateCcw, Trash2, Loader2, Shield
+  ShoppingCart, RotateCcw, Trash2, Loader2, Shield, Lock
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { purchaseVehicle, restockVehicle, deleteVehicle } from '../../services/vehicleService';
@@ -194,16 +194,20 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
                 purchaseMutation.mutate();
               }
             }}
-            disabled={!inStock || isAnyMutating}
+            disabled={!inStock || !user || isAnyMutating}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-gray-950 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20"
           >
             {purchaseMutation.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
+            ) : !user && inStock ? (
+              <Lock className="w-4 h-4" />
             ) : (
               <ShoppingCart className="w-4 h-4" />
             )}
             {!inStock
               ? 'Out of Stock'
+              : !user
+              ? 'Sign in to Purchase'
               : isStaffOrAdmin
               ? 'Record Sale'
               : 'Purchase'}
