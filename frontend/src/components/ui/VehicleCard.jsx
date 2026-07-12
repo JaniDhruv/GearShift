@@ -79,9 +79,9 @@ export default function VehicleCard({ vehicle, onClick, onPurchaseClick }) {
       {/* Price */}
       <div>
         <p className="text-xl font-bold text-white tracking-tight">
-          ${vehicle.price.toLocaleString('en-US')}
+          ₹{vehicle.price.toLocaleString('en-IN')}
         </p>
-        <p className="text-xs text-gray-500 mt-0.5">MSRP</p>
+        <p className="text-xs text-gray-500 mt-0.5">Ex-Showroom INR</p>
       </div>
 
       {/* Primary Role-Aware Action Button */}

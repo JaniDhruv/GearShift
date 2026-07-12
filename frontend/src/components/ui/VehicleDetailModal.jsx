@@ -119,9 +119,9 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
           {/* Price hero */}
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-4 flex items-baseline gap-2">
             <span className="text-2xl font-extrabold text-white">
-              ${vehicle.price.toLocaleString('en-US')}
+              ₹{vehicle.price.toLocaleString('en-IN')}
             </span>
-            <span className="text-sm text-gray-400">MSRP</span>
+            <span className="text-sm text-gray-400">Ex-Showroom INR</span>
             <span
               className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full border ${
                 inStock

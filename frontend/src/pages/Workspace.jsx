@@ -202,9 +202,9 @@ export default function Workspace() {
             <span>
               Portfolio MSRP Value:{' '}
               <strong className="text-emerald-400">
-                ${vehicles
+                ₹{vehicles
                   .reduce((sum, v) => sum + v.price * v.quantity, 0)
-                  .toLocaleString('en-US')}
+                  .toLocaleString('en-IN')}
               </strong>
             </span>
           </div>
@@ -282,7 +282,7 @@ export default function Workspace() {
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-sm">
                         <span className="font-semibold text-emerald-400">
-                          ${vehicle.price.toLocaleString('en-US')}
+                          ₹{vehicle.price.toLocaleString('en-IN')}
                         </span>
                         <span
                           className={`text-xs font-medium px-2 py-0.5 rounded-full border ${

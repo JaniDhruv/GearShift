@@ -44,7 +44,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
         <FormField
           id="vehicle-make"
           label="Make"
-          placeholder="e.g. Toyota"
+          placeholder="e.g. Tata"
           icon={Car}
           registration={register('make', {
             required: 'Make is required',
@@ -56,7 +56,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
         <FormField
           id="vehicle-model"
           label="Model"
-          placeholder="e.g. Camry"
+          placeholder="e.g. Nexon"
           icon={Tag}
           registration={register('model', {
             required: 'Model is required',
@@ -79,9 +79,9 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
           id="vehicle-price"
-          label="Price (USD)"
+          label="Ex-Showroom Price (INR ₹)"
           type="number"
-          placeholder="28500"
+          placeholder="1450000"
           icon={DollarSign}
           registration={register('price', {
             required: 'Price is required',

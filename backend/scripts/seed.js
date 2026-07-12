@@ -50,28 +50,28 @@ const seedDatabase = async () => {
     const adminUser = createdUsers.find(u => u.role === 'admin');
     logger.info(`Seeded ${createdUsers.length} demo users (Admin, Staff, User).`);
 
-    // Create 20 sample vehicles
+    // Create 20 sample vehicles (Indian Market, prices in INR Ex-Showroom)
     const sampleVehicles = [
-      { make: 'Honda', model: 'Civic', category: 'SEDAN', price: 24500, quantity: 12 },
-      { make: 'Toyota', model: 'Camry', category: 'SEDAN', price: 26800, quantity: 8 },
-      { make: 'BMW', model: '3 Series', category: 'LUXURY', price: 44000, quantity: 5 },
-      { make: 'Mercedes-Benz', model: 'C-Class', category: 'LUXURY', price: 46000, quantity: 4 },
-      { make: 'Audi', model: 'A4', category: 'LUXURY', price: 42500, quantity: 6 },
-      { make: 'Toyota', model: 'RAV4', category: 'SUV', price: 30500, quantity: 15 },
-      { make: 'Honda', model: 'CR-V', category: 'SUV', price: 31000, quantity: 14 },
-      { make: 'Ford', model: 'Explorer', category: 'SUV', price: 38500, quantity: 7 },
-      { make: 'Ford', model: 'F-150', category: 'TRUCK', price: 41000, quantity: 10 },
-      { make: 'Chevrolet', model: 'Silverado 1500', category: 'TRUCK', price: 40500, quantity: 9 },
-      { make: 'Volkswagen', model: 'Golf GTI', category: 'HATCHBACK', price: 31500, quantity: 6 },
-      { make: 'Mazda', model: 'Mazda3 Hatchback', category: 'HATCHBACK', price: 25500, quantity: 11 },
-      { make: 'Porsche', model: '911 Carrera', category: 'SPORTS', price: 115000, quantity: 2 },
-      { make: 'Ford', model: 'Mustang GT', category: 'SPORTS', price: 44500, quantity: 5 },
-      { make: 'Chevrolet', model: 'Corvette Stingray', category: 'SPORTS', price: 68000, quantity: 3 },
-      { make: 'Tesla', model: 'Model 3', category: 'ELECTRIC', price: 40000, quantity: 10 },
-      { make: 'Tesla', model: 'Model Y', category: 'ELECTRIC', price: 45000, quantity: 12 },
-      { make: 'Hyundai', model: 'Ioniq 5', category: 'ELECTRIC', price: 42000, quantity: 8 },
-      { make: 'Toyota', model: 'Prius', category: 'HYBRID', price: 28000, quantity: 14 },
-      { make: 'Honda', model: 'Accord Hybrid', category: 'HYBRID', price: 32500, quantity: 9 }
+      { make: 'Tata', model: 'Nexon', category: 'SUV', price: 1150000, quantity: 15 },
+      { make: 'Mahindra', model: 'XUV700', category: 'SUV', price: 2450000, quantity: 8 },
+      { make: 'Mahindra', model: 'Thar', category: 'SUV', price: 1680000, quantity: 3 },
+      { make: 'Maruti Suzuki', model: 'Swift', category: 'HATCHBACK', price: 780000, quantity: 20 },
+      { make: 'Hyundai', model: 'Creta', category: 'SUV', price: 1520000, quantity: 12 },
+      { make: 'Tata', model: 'Harrier', category: 'SUV', price: 2190000, quantity: 5 },
+      { make: 'Kia', model: 'Seltos', category: 'SUV', price: 1650000, quantity: 9 },
+      { make: 'Toyota', model: 'Innova Hycross', category: 'HYBRID', price: 3090000, quantity: 6 },
+      { make: 'Tata', model: 'Tiago EV', category: 'ELECTRIC', price: 899000, quantity: 14 },
+      { make: 'MG', model: 'ZS EV', category: 'ELECTRIC', price: 2498000, quantity: 2 },
+      { make: 'Skoda', model: 'Slavia', category: 'SEDAN', price: 1489000, quantity: 7 },
+      { make: 'Volkswagen', model: 'Virtus GT', category: 'SEDAN', price: 1895000, quantity: 4 },
+      { make: 'Honda', model: 'City Hybrid e:HEV', category: 'HYBRID', price: 2055000, quantity: 10 },
+      { make: 'Mahindra', model: 'Scorpio-N', category: 'SUV', price: 1985000, quantity: 0 },
+      { make: 'Maruti Suzuki', model: 'Brezza', category: 'SUV', price: 1120000, quantity: 18 },
+      { make: 'Hyundai', model: 'Verna Turbo', category: 'SEDAN', price: 1625000, quantity: 6 },
+      { make: 'Toyota', model: 'Hilux', category: 'TRUCK', price: 3790000, quantity: 3 },
+      { make: 'BMW', model: 'M340i xDrive', category: 'SPORTS', price: 7290000, quantity: 2 },
+      { make: 'Mercedes-Benz', model: 'E-Class E350d', category: 'LUXURY', price: 8850000, quantity: 4 },
+      { make: 'BYD', model: 'Seal AWD', category: 'ELECTRIC', price: 5300000, quantity: 5 }
     ].map(vehicle => ({
       ...vehicle,
       createdBy: adminUser._id

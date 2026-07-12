@@ -20,12 +20,12 @@ const STATS_CONFIG = [
   { label: 'In Stock', getValue: (v) => v.filter((x) => x.quantity > 0).length },
   { label: 'Out of Stock', getValue: (v) => v.filter((x) => x.quantity === 0).length },
   {
-    label: 'Total Value',
+    label: 'Total Inventory Value',
     getValue: (v) =>
-      '$' +
+      '₹' +
       v
         .reduce((sum, x) => sum + x.price * x.quantity, 0)
-        .toLocaleString('en-US', { maximumFractionDigits: 0 }),
+        .toLocaleString('en-IN', { maximumFractionDigits: 0 }),
   },
 ];
 

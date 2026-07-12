@@ -6,11 +6,11 @@ const CATEGORIES = [
 ];
 
 const PRICE_PRESETS = [
-  { label: 'All prices', minPrice: '', maxPrice: '' },
-  { label: 'Under $20k', minPrice: '', maxPrice: '20000' },
-  { label: '$20k – $50k', minPrice: '20000', maxPrice: '50000' },
-  { label: '$50k – $100k', minPrice: '50000', maxPrice: '100000' },
-  { label: 'Over $100k', minPrice: '100000', maxPrice: '' },
+  { label: 'All prices (INR)', minPrice: '', maxPrice: '' },
+  { label: 'Under ₹10 Lakh', minPrice: '', maxPrice: '1000000' },
+  { label: '₹10L – ₹20 Lakh', minPrice: '1000000', maxPrice: '2000000' },
+  { label: '₹20L – ₹40 Lakh', minPrice: '2000000', maxPrice: '4000000' },
+  { label: 'Over ₹40 Lakh', minPrice: '4000000', maxPrice: '' },
 ];
 
 export default function FilterPanel({ filters, onChange, onReset }) {

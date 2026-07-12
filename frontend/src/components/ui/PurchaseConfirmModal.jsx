@@ -37,9 +37,9 @@ export default function PurchaseConfirmModal({
               <DollarSign className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs text-gray-400">Price</p>
+              <p className="text-xs text-gray-400">Ex-Showroom Price</p>
               <p className="text-sm font-bold text-white">
-                ${vehicle.price.toLocaleString('en-US')}
+                ₹{vehicle.price.toLocaleString('en-IN')}
               </p>
             </div>
           </div>
