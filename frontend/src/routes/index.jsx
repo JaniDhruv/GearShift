@@ -7,6 +7,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Dashboard from '../pages/Dashboard';
+import Workspace from '../pages/Workspace';
 import Admin from '../pages/Admin';
 
 export default function AppRoutes() {
@@ -25,6 +26,11 @@ export default function AppRoutes() {
         {/* Protected routes: require authentication */}
         <Route element={<ProtectedLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
+        </Route>
+
+        {/* Operational workspace route: staff and admin */}
+        <Route element={<ProtectedLayout allowedRoles={['staff', 'admin']} />}>
+          <Route path="workspace" element={<Workspace />} />
         </Route>
 
         {/* Admin-only protected route */}

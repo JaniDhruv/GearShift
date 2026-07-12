@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Car, LayoutDashboard, Shield, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Car, LayoutDashboard, Shield, LogIn, UserPlus, LogOut, Briefcase } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
+  const isStaffOrAdmin = user?.role === 'staff' || user?.role === 'admin';
+  const isAdmin = user?.role === 'admin';
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -36,10 +38,18 @@ export default function Navbar() {
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </NavLink>
-            <NavLink to="/admin" className={navLinkClass}>
-              <Shield className="w-4 h-4" />
-              Admin
-            </NavLink>
+            {isStaffOrAdmin && (
+              <NavLink to="/workspace" className={navLinkClass}>
+                <Briefcase className="w-4 h-4" />
+                Workspace
+              </NavLink>
+            )}
+            {isAdmin && (
+              <NavLink to="/admin" className={navLinkClass}>
+                <Shield className="w-4 h-4" />
+                Admin
+              </NavLink>
+            )}
           </nav>
 
           {/* Auth Actions */}
