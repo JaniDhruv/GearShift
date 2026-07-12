@@ -1,118 +1,161 @@
 import React from 'react';
-import { ShoppingCart, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
-const CATEGORY_STYLES = {
-  SEDAN:    { color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', dot: 'bg-blue-400' },
-  SUV:      { color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20', dot: 'bg-purple-400' },
-  HATCHBACK:{ color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20', dot: 'bg-yellow-400' },
-  TRUCK:    { color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20', dot: 'bg-orange-400' },
-  SPORTS:   { color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20', dot: 'bg-red-400' },
-  LUXURY:   { color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', dot: 'bg-emerald-400' },
-  ELECTRIC: { color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20', dot: 'bg-cyan-400' },
-  HYBRID:   { color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20', dot: 'bg-teal-400' },
+const CATEGORY_GRADIENTS = {
+  SEDAN:    'from-blue-50 to-blue-100',
+  SUV:      'from-violet-50 to-violet-100',
+  HATCHBACK:'from-amber-50 to-amber-100',
+  TRUCK:    'from-orange-50 to-orange-100',
+  SPORTS:   'from-red-50 to-red-100',
+  LUXURY:   'from-emerald-50 to-emerald-100',
+  ELECTRIC: 'from-cyan-50 to-cyan-100',
+  HYBRID:   'from-teal-50 to-teal-100',
 };
 
-const CATEGORY_ICONS = {
-  SEDAN: '🚗', SUV: '🚙', HATCHBACK: '🚘', TRUCK: '🛻',
-  SPORTS: '🏎️', LUXURY: '🏅', ELECTRIC: '⚡', HYBRID: '🌿',
+const CATEGORY_ACCENT = {
+  SEDAN:    'border-l-blue-400',
+  SUV:      'border-l-violet-400',
+  HATCHBACK:'border-l-amber-400',
+  TRUCK:    'border-l-orange-400',
+  SPORTS:   'border-l-red-400',
+  LUXURY:   'border-l-emerald-400',
+  ELECTRIC: 'border-l-cyan-400',
+  HYBRID:   'border-l-teal-400',
+};
+
+const CATEGORY_ICON_COLOR = {
+  SEDAN:    'text-blue-400',
+  SUV:      'text-violet-400',
+  HATCHBACK:'text-amber-400',
+  TRUCK:    'text-orange-400',
+  SPORTS:   'text-red-400',
+  LUXURY:   'text-emerald-400',
+  ELECTRIC: 'text-cyan-400',
+  HYBRID:   'text-teal-400',
+};
+
+// BoxIcons names per category
+const CATEGORY_BXICON = {
+  SEDAN:    'bxs-car',
+  SUV:      'bxs-car',
+  HATCHBACK:'bxs-car',
+  TRUCK:    'bxs-truck',
+  SPORTS:   'bx-car',
+  LUXURY:   'bxs-diamond',
+  ELECTRIC: 'bxs-bolt-circle',
+  HYBRID:   'bxs-leaf',
+};
+
+const CATEGORY_TEXT_COLOR = {
+  SEDAN:    'text-blue-600',
+  SUV:      'text-violet-600',
+  HATCHBACK:'text-amber-600',
+  TRUCK:    'text-orange-600',
+  SPORTS:   'text-red-600',
+  LUXURY:   'text-emerald-600',
+  ELECTRIC: 'text-cyan-600',
+  HYBRID:   'text-teal-600',
 };
 
 export default function VehicleCard({ vehicle, onClick, onPurchaseClick }) {
   const { user } = useAuth();
   const isStaffOrAdmin = user?.role === 'staff' || user?.role === 'admin';
 
-  const style = CATEGORY_STYLES[vehicle.category] || CATEGORY_STYLES.SEDAN;
-  const icon = CATEGORY_ICONS[vehicle.category] || '🚗';
-  const inStock = vehicle.quantity > 0;
+  const gradient  = CATEGORY_GRADIENTS[vehicle.category] || CATEGORY_GRADIENTS.SEDAN;
+  const accent    = CATEGORY_ACCENT[vehicle.category]    || CATEGORY_ACCENT.SEDAN;
+  const iconColor = CATEGORY_ICON_COLOR[vehicle.category]|| CATEGORY_ICON_COLOR.SEDAN;
+  const bxIcon    = CATEGORY_BXICON[vehicle.category]    || 'bxs-car';
+  const textColor = CATEGORY_TEXT_COLOR[vehicle.category]|| CATEGORY_TEXT_COLOR.SEDAN;
+  const inStock   = vehicle.quantity > 0;
   const isLowStock = vehicle.quantity > 0 && vehicle.quantity <= 3;
 
   const handleActionClick = (e) => {
     e.stopPropagation();
-    if (inStock && onPurchaseClick) {
-      onPurchaseClick(vehicle);
-    }
+    if (inStock && onPurchaseClick) onPurchaseClick(vehicle);
   };
 
   return (
     <article
       onClick={() => onClick?.(vehicle)}
-      className="group relative bg-gray-900/60 border border-gray-800 rounded-2xl p-5 cursor-pointer hover:border-gray-700 hover:bg-gray-900 hover:shadow-xl hover:shadow-black/30 transition-all duration-200 flex flex-col gap-4"
+      className={`group relative bg-white border border-cream-200 rounded-2xl shadow-card hover:shadow-card-lg hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden cursor-pointer border-l-[3px] ${accent}`}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.(vehicle)}
       aria-label={`View details for ${vehicle.make} ${vehicle.model}`}
     >
-      {/* Header row */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl text-xl border ${style.bg}`}>
-            {icon}
-          </div>
-          <div>
-            <h3 className="font-semibold text-white text-sm leading-tight">
-              {vehicle.make} {vehicle.model}
-            </h3>
-            <span className={`inline-flex items-center gap-1.5 text-xs font-medium mt-0.5 ${style.color}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-              {vehicle.category}
+      {/* Gradient image area with animated icon */}
+      <div className={`h-36 bg-gradient-to-br ${gradient} flex items-center justify-center relative overflow-hidden`}>
+        {/* Subtle background shimmer on hover */}
+        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300" />
+
+        {/* Animated floating icon */}
+        <i className={`bx ${bxIcon} text-[52px] ${iconColor} anim-float opacity-80`} />
+
+        {/* Stock badge top-right */}
+        <div className="absolute top-3 right-3">
+          {!inStock ? (
+            <span className="gs-badge bg-red-50 border-red-200 text-red-600">
+              Out of Stock
             </span>
-          </div>
+          ) : isLowStock ? (
+            <span className="gs-badge bg-amber-50 border-amber-200 text-amber-700">
+              Low — {vehicle.quantity} left
+            </span>
+          ) : (
+            <span className="gs-badge bg-emerald-50 border-emerald-200 text-emerald-700">
+              {vehicle.quantity} in stock
+            </span>
+          )}
         </div>
 
-        {/* Urgency & Availability Badge */}
-        {!inStock ? (
-          <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
-            <span>🔴</span> Out of Stock
+        {/* Category label top-left */}
+        <div className="absolute top-3 left-3">
+          <span className={`text-[11px] font-semibold uppercase tracking-wider ${textColor}`}>
+            {vehicle.category}
           </span>
-        ) : isLowStock ? (
-          <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
-            <span>🟡</span> Low Stock ({vehicle.quantity})
-          </span>
-        ) : (
-          <span className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-            <span>🟢</span> In Stock ({vehicle.quantity})
-          </span>
-        )}
+        </div>
       </div>
 
-      {/* Price */}
-      <div>
-        <p className="text-xl font-bold text-white tracking-tight">
-          ₹{vehicle.price.toLocaleString('en-IN')}
-        </p>
-        <p className="text-xs text-gray-500 mt-0.5">Ex-Showroom INR</p>
-      </div>
+      {/* Card Body */}
+      <div className="p-4 flex flex-col gap-3 flex-1">
+        <h3 className="font-semibold text-ink-900 text-[15px] leading-snug">
+          {vehicle.make} {vehicle.model}
+        </h3>
 
-      {/* Primary Role-Aware Action Button */}
-      <div className="mt-auto pt-2 border-t border-gray-800/80">
-        <button
-          type="button"
-          onClick={handleActionClick}
-          disabled={!inStock || !user}
-          className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${
-            !inStock || !user
-              ? 'bg-gray-800 border border-gray-700/60 text-gray-400 cursor-not-allowed'
-              : 'bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-gray-950 shadow-emerald-500/20'
-          }`}
-        >
-          {!user && inStock ? (
-            <Lock className="w-4 h-4" />
-          ) : (
-            <ShoppingCart className="w-4 h-4" />
-          )}
-          {!inStock
-            ? 'Out of Stock'
-            : !user
-            ? 'Sign in to Purchase'
-            : isStaffOrAdmin
-            ? 'Record Sale'
-            : 'Purchase'}
-        </button>
-      </div>
+        {/* Price */}
+        <div>
+          <p className="text-xl font-bold text-ink-900 tracking-tight">
+            ₹{vehicle.price.toLocaleString('en-IN')}
+          </p>
+          <p className="text-[11px] text-ink-400 mt-0.5">Ex-Showroom INR</p>
+        </div>
 
-      {/* Hover cue */}
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-b-2xl pointer-events-none" />
+        {/* Action Button */}
+        <div className="mt-auto pt-3 border-t border-cream-100">
+          <button
+            type="button"
+            onClick={handleActionClick}
+            disabled={!inStock || !user}
+            className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-sm transition-all ${
+              !inStock || !user
+                ? 'bg-cream-100 border border-cream-200 text-ink-400 cursor-not-allowed'
+                : 'bg-primary-500 hover:bg-primary-600 active:scale-[0.98] text-white shadow-sm shadow-primary-500/20 anim-pulse-glow'
+            }`}
+          >
+            {!user && inStock
+              ? <i className="bx bxs-lock-alt text-base" />
+              : <i className="bx bxs-cart text-base" />
+            }
+            {!inStock
+              ? 'Out of Stock'
+              : !user
+              ? 'Sign in to Purchase'
+              : isStaffOrAdmin
+              ? 'Record Sale'
+              : 'Purchase'}
+          </button>
+        </div>
+      </div>
     </article>
   );
 }

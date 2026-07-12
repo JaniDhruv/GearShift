@@ -1,33 +1,57 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  X, Car, Tag, DollarSign, Package, Calendar,
-  ShoppingCart, RotateCcw, Trash2, Loader2, Shield, Lock
-} from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { purchaseVehicle, restockVehicle, deleteVehicle } from '../../services/vehicleService';
 import toast from 'react-hot-toast';
 
-const CATEGORY_ICONS = {
-  SEDAN: '🚗', SUV: '🚙', HATCHBACK: '🚘', TRUCK: '🛻',
-  SPORTS: '🏎️', LUXURY: '🏅', ELECTRIC: '⚡', HYBRID: '🌿',
+const CATEGORY_GRADIENTS = {
+  SEDAN:    'from-blue-50 to-blue-100',
+  SUV:      'from-violet-50 to-violet-100',
+  HATCHBACK:'from-amber-50 to-amber-100',
+  TRUCK:    'from-orange-50 to-orange-100',
+  SPORTS:   'from-red-50 to-red-100',
+  LUXURY:   'from-emerald-50 to-emerald-100',
+  ELECTRIC: 'from-cyan-50 to-cyan-100',
+  HYBRID:   'from-teal-50 to-teal-100',
 };
 
-function DetailRow({ icon: Icon, label, value }) {
+const CATEGORY_BXICON = {
+  SEDAN:    'bxs-car',
+  SUV:      'bxs-car',
+  HATCHBACK:'bxs-car',
+  TRUCK:    'bxs-truck',
+  SPORTS:   'bx-car',
+  LUXURY:   'bxs-diamond',
+  ELECTRIC: 'bxs-bolt-circle',
+  HYBRID:   'bxs-leaf',
+};
+
+const CATEGORY_ICON_COLOR = {
+  SEDAN:    'text-blue-400',
+  SUV:      'text-violet-400',
+  HATCHBACK:'text-amber-400',
+  TRUCK:    'text-orange-400',
+  SPORTS:   'text-red-400',
+  LUXURY:   'text-emerald-400',
+  ELECTRIC: 'text-cyan-400',
+  HYBRID:   'text-teal-400',
+};
+
+function DetailRow({ iconClass, label, value }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-gray-800/60 last:border-0">
-      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-800/60 text-gray-400 shrink-0">
-        <Icon className="w-4 h-4" />
+    <div className="flex items-center gap-3 py-2.5 border-b border-cream-100 last:border-0">
+      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-cream-100 border border-cream-200 text-ink-400 shrink-0">
+        <i className={`bx ${iconClass} text-base`} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-sm font-medium text-white truncate">{value}</p>
+        <p className="text-xs text-ink-400">{label}</p>
+        <p className="text-sm font-medium text-ink-900 truncate">{value}</p>
       </div>
     </div>
   );
 }
 
-export default function VehicleDetailModal({ vehicle, onClose }) {
+export default function VehicleDetailModal({ vehicle, onClose, onPurchaseClick }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [restockQty, setRestockQty] = useState(1);
@@ -36,9 +60,7 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
   const isAdmin = user?.role === 'admin';
   const inStock = vehicle.quantity > 0;
 
-  const invalidateVehicles = () => {
-    queryClient.invalidateQueries({ queryKey: ['vehicles'] });
-  };
+  const invalidateVehicles = () => queryClient.invalidateQueries({ queryKey: ['vehicles'] });
 
   const purchaseMutation = useMutation({
     mutationFn: () => purchaseVehicle(vehicle.id),
@@ -76,7 +98,9 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
   const isAnyMutating =
     purchaseMutation.isPending || restockMutation.isPending || deleteMutation.isPending;
 
-  const icon = CATEGORY_ICONS[vehicle.category] || '🚗';
+  const gradient  = CATEGORY_GRADIENTS[vehicle.category] || CATEGORY_GRADIENTS.SEDAN;
+  const bxIcon    = CATEGORY_BXICON[vehicle.category]    || 'bxs-car';
+  const iconColor = CATEGORY_ICON_COLOR[vehicle.category]|| 'text-blue-400';
 
   return (
     <div
@@ -86,66 +110,56 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
       aria-label={`Vehicle detail: ${vehicle.make} ${vehicle.model}`}
     >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/60 flex flex-col max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{icon}</span>
-            <div>
-              <h2 className="text-base font-bold text-white">
-                {vehicle.make} {vehicle.model}
-              </h2>
-              <p className="text-xs text-gray-400">{vehicle.category}</p>
-            </div>
-          </div>
+      <div className="relative w-full max-w-md bg-white border border-cream-200 rounded-2xl shadow-card-lg flex flex-col max-h-[90vh] overflow-hidden">
+
+        {/* Animated hero header */}
+        <div className={`relative h-32 bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
+          <div className="absolute inset-0 bg-white/0 hover:bg-white/10 transition-colors" />
+          <i className={`bx ${bxIcon} text-[72px] ${iconColor} anim-float opacity-70`} />
+          {/* Close button overlay */}
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-gray-800 transition-colors"
+            className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/80 text-ink-500 hover:bg-white hover:text-ink-900 transition-colors"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <i className="bx bx-x text-xl" />
           </button>
+          {/* Name overlay */}
+          <div className="absolute bottom-3 left-4">
+            <h2 className="text-base font-bold text-ink-900">{vehicle.make} {vehicle.model}</h2>
+            <p className="text-xs text-ink-600">{vehicle.category}</p>
+          </div>
         </div>
 
         {/* Body */}
         <div className="px-6 py-4 overflow-y-auto flex-1">
           {/* Price hero */}
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-4 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-white">
+          <div className="bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 mb-4 flex items-baseline gap-2">
+            <span className="text-2xl font-extrabold text-ink-900">
               ₹{vehicle.price.toLocaleString('en-IN')}
             </span>
-            <span className="text-sm text-gray-400">Ex-Showroom INR</span>
-            <span
-              className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full border ${
-                inStock
-                  ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-                  : 'text-red-400 bg-red-500/10 border-red-500/20'
-              }`}
-            >
+            <span className="text-sm text-ink-500">Ex-Showroom INR</span>
+            <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full border ${
+              inStock
+                ? 'text-primary-700 bg-primary-50 border-primary-200'
+                : 'text-red-600 bg-red-50 border-red-200'
+            }`}>
               {inStock ? `${vehicle.quantity} in stock` : 'Out of stock'}
             </span>
           </div>
 
           {/* Detail rows */}
-          <div className="bg-gray-800/30 border border-gray-800 rounded-xl px-4">
-            <DetailRow icon={Car} label="Make" value={vehicle.make} />
-            <DetailRow icon={Tag} label="Model" value={vehicle.model} />
-            <DetailRow icon={Shield} label="Category" value={vehicle.category} />
+          <div className="bg-cream-50 border border-cream-200 rounded-xl px-4">
+            <DetailRow iconClass="bxs-car"       label="Make"       value={vehicle.make} />
+            <DetailRow iconClass="bx-tag"         label="Model"      value={vehicle.model} />
+            <DetailRow iconClass="bxs-shield"     label="Category"   value={vehicle.category} />
+            <DetailRow iconClass="bx-rupee"       label="Ex-Showroom Price" value={`₹${vehicle.price.toLocaleString('en-IN')}`} />
+            <DetailRow iconClass="bxs-package"    label="Stock Quantity" value={vehicle.quantity} />
             <DetailRow
-              icon={DollarSign}
-              label="Ex-Showroom Price"
-              value={`₹${vehicle.price.toLocaleString('en-IN')}`}
-            />
-            <DetailRow icon={Package} label="Stock Quantity" value={vehicle.quantity} />
-            <DetailRow
-              icon={Calendar}
+              iconClass="bx-calendar"
               label="Added"
               value={new Date(vehicle.createdAt).toLocaleDateString('en-IN', {
                 year: 'numeric', month: 'short', day: 'numeric',
@@ -155,8 +169,8 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
 
           {/* Restock controls (admin only) */}
           {isAdmin && (
-            <div className="mt-4 bg-gray-800/30 border border-gray-800 rounded-xl px-4 py-3">
-              <p className="text-xs font-medium text-gray-400 mb-2">Restock quantity</p>
+            <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+              <p className="text-xs font-medium text-blue-600 mb-2">Restock quantity</p>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
@@ -164,19 +178,18 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
                   max={999}
                   value={restockQty}
                   onChange={(e) => setRestockQty(Number(e.target.value))}
-                  className="w-20 px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-700 text-sm text-white outline-none focus:border-emerald-500/50"
+                  className="w-20 px-3 py-1.5 rounded-lg bg-white border border-blue-200 text-sm text-ink-900 outline-none focus:border-primary-400"
                   aria-label="Restock quantity"
                 />
                 <button
                   onClick={() => restockMutation.mutate()}
                   disabled={isAnyMutating || restockQty < 1}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 text-sm font-medium hover:bg-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-100 border border-blue-200 text-blue-700 text-sm font-medium hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {restockMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <RotateCcw className="w-4 h-4" />
-                  )}
+                  {restockMutation.isPending
+                    ? <i className="bx bx-loader-alt text-base anim-spin-slow" />
+                    : <i className="bx bx-revision text-base" />
+                  }
                   Restock
                 </button>
               </div>
@@ -185,7 +198,7 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
         </div>
 
         {/* Footer actions */}
-        <div className="px-6 py-4 border-t border-gray-800 flex items-center gap-3">
+        <div className="px-6 py-4 border-t border-cream-100 flex items-center gap-3">
           <button
             onClick={() => {
               if (onPurchaseClick) {
@@ -195,15 +208,14 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
               }
             }}
             disabled={!inStock || !user || isAnyMutating}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-gray-950 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary-500 hover:bg-primary-600 active:scale-[0.98] text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm shadow-primary-500/20"
           >
-            {purchaseMutation.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : !user && inStock ? (
-              <Lock className="w-4 h-4" />
-            ) : (
-              <ShoppingCart className="w-4 h-4" />
-            )}
+            {purchaseMutation.isPending
+              ? <i className="bx bx-loader-alt text-base anim-spin-slow" />
+              : !user && inStock
+              ? <i className="bx bxs-lock-alt text-base" />
+              : <i className="bx bxs-cart text-base" />
+            }
             {!inStock
               ? 'Out of Stock'
               : !user
@@ -221,13 +233,12 @@ export default function VehicleDetailModal({ vehicle, onClose }) {
                 }
               }}
               disabled={isAnyMutating}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              {deleteMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Trash2 className="w-4 h-4" />
-              )}
+              {deleteMutation.isPending
+                ? <i className="bx bx-loader-alt text-base anim-spin-slow" />
+                : <i className="bx bxs-trash text-base" />
+              }
               Delete
             </button>
           )}

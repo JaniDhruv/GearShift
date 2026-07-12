@@ -22,9 +22,19 @@ export default function App() {
           position="top-right"
           toastOptions={{
             style: {
-              background: '#111827',
-              color: '#f9fafb',
-              border: '1px solid #374151',
+              background: '#FFFFFF',
+              color: '#1C1917',
+              border: '1px solid #E5E2DA',
+              boxShadow: '0 4px 12px 0 rgba(0,0,0,0.08)',
+              borderRadius: '12px',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+            },
+            success: {
+              iconTheme: { primary: '#059669', secondary: '#FFFFFF' },
+            },
+            error: {
+              iconTheme: { primary: '#DC2626', secondary: '#FFFFFF' },
             },
           }}
         />

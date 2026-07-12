@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { Car, User, Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { register as registerApi, login as loginApi, parseAuthError } from '../services/authService';
 import FormField from '../components/common/FormField';
@@ -42,39 +41,37 @@ export default function Register() {
     <button
       type="button"
       onClick={() => setShow(!show)}
-      className="text-gray-500 hover:text-gray-300 transition-colors"
+      className="text-ink-400 hover:text-ink-700 transition-colors"
       aria-label={show ? `Hide ${label}` : `Show ${label}`}
     >
-      {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      <i className={`bx ${show ? 'bx-hide' : 'bx-show'} text-lg`} />
     </button>
   );
 
   return (
-    <div className="flex-1 flex items-center justify-center px-4 py-16 bg-gray-950">
-      {/* Ambient glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-emerald-500/5 rounded-full blur-3xl" />
+    <div className="flex-1 flex items-center justify-center px-4 py-16 bg-cream-100 relative overflow-hidden">
+      {/* Animated blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="anim-blob-2 absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary-500/8 blur-3xl rounded-full" />
+        <div className="anim-blob-1 absolute bottom-0 left-0 w-64 h-64 bg-violet-500/5 blur-3xl rounded-full" />
+        <div className="anim-blob-3 absolute top-1/2 right-0 w-56 h-56 bg-blue-500/5 blur-3xl rounded-full" />
       </div>
 
-      <div className="relative w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="relative w-full max-w-md anim-fade-up">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-4 shadow-lg shadow-emerald-500/10">
-            <Car className="w-7 h-7" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-50 border border-primary-200 text-primary-600 mb-4 shadow-card anim-float">
+            <i className="bx bxs-car text-3xl" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Create your account</h1>
-          <p className="text-gray-400 mt-1 text-sm">Join the GearShift dealership network</p>
+          <h1 className="text-2xl font-bold text-ink-900 tracking-tight">Create your account</h1>
+          <p className="text-ink-500 mt-1 text-sm">Join the GearShift dealership network</p>
         </div>
 
         {/* Card */}
-        <div className="bg-gray-900/60 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 shadow-xl shadow-black/30">
-          {/* Server Error Banner */}
+        <div className="bg-white border border-cream-200 rounded-2xl p-8 shadow-card-md">
           {serverError && (
-            <div
-              role="alert"
-              className="mb-6 flex items-start gap-3 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400"
-            >
-              <span className="mt-0.5 shrink-0 font-bold">!</span>
+            <div role="alert" className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+              <i className="bx bxs-error-circle text-base shrink-0 mt-0.5" />
               <span>{serverError}</span>
             </div>
           )}
@@ -86,7 +83,7 @@ export default function Register() {
               type="text"
               placeholder="John Smith"
               autoComplete="name"
-              icon={User}
+              iconClass="bx-user"
               registration={register('name', {
                 required: 'Name is required',
                 minLength: { value: 2, message: 'Name must be at least 2 characters' },
@@ -101,13 +98,10 @@ export default function Register() {
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
-              icon={Mail}
+              iconClass="bx-envelope"
               registration={register('email', {
                 required: 'Email is required',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Enter a valid email address',
-                },
+                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email address' },
               })}
               error={errors.email}
             />
@@ -118,7 +112,7 @@ export default function Register() {
               type={showPassword ? 'text' : 'password'}
               placeholder="Min. 6 characters"
               autoComplete="new-password"
-              icon={Lock}
+              iconClass="bxs-lock-alt"
               rightElement={PasswordToggle(showPassword, setShowPassword, 'password')}
               registration={register('password', {
                 required: 'Password is required',
@@ -133,7 +127,7 @@ export default function Register() {
               type={showConfirm ? 'text' : 'password'}
               placeholder="Re-enter your password"
               autoComplete="new-password"
-              icon={Lock}
+              iconClass="bxs-lock-alt"
               rightElement={PasswordToggle(showConfirm, setShowConfirm, 'confirm password')}
               registration={register('confirmPassword', {
                 required: 'Please confirm your password',
@@ -146,25 +140,25 @@ export default function Register() {
               id="register-submit"
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-gray-950 font-semibold text-sm transition-all shadow-md shadow-emerald-500/20 mt-2"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-sm shadow-primary-500/20 mt-2"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <i className="bx bx-loader-alt text-base anim-spin-slow" />
                   Creating account…
                 </>
               ) : (
                 <>
                   Create account
-                  <ArrowRight className="w-4 h-4" />
+                  <i className="bx bx-right-arrow-alt text-lg" />
                 </>
               )}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-ink-500">
             Already have an account?{' '}
-            <Link to="/login" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+            <Link to="/login" className="text-primary-600 hover:text-primary-700 font-semibold transition-colors">
               Sign in
             </Link>
           </p>

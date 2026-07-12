@@ -1,6 +1,5 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Car, Tag, DollarSign, Package, Loader2 } from 'lucide-react';
 import FormField from '../common/FormField';
 import SelectField from '../common/SelectField';
 import { VEHICLE_CATEGORIES } from '../../services/vehicleService';
@@ -45,7 +44,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
           id="vehicle-make"
           label="Make"
           placeholder="e.g. Tata"
-          icon={Car}
+          iconClass="bxs-car"
           registration={register('make', {
             required: 'Make is required',
             minLength: { value: 2, message: 'Make must be at least 2 characters' },
@@ -57,7 +56,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
           id="vehicle-model"
           label="Model"
           placeholder="e.g. Nexon"
-          icon={Tag}
+          iconClass="bx-tag"
           registration={register('model', {
             required: 'Model is required',
             minLength: { value: 1, message: 'Model is required' },
@@ -70,9 +69,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
         id="vehicle-category"
         label="Category"
         options={CATEGORY_OPTIONS}
-        registration={register('category', {
-          required: 'Category is required',
-        })}
+        registration={register('category', { required: 'Category is required' })}
         error={errors.category}
       />
 
@@ -82,7 +79,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
           label="Ex-Showroom Price (INR ₹)"
           type="number"
           placeholder="1450000"
-          icon={DollarSign}
+          iconClass="bx-rupee"
           registration={register('price', {
             required: 'Price is required',
             min: { value: 0.01, message: 'Price must be strictly positive' },
@@ -95,7 +92,7 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
           label="Initial Stock Quantity"
           type="number"
           placeholder="1"
-          icon={Package}
+          iconClass="bxs-package"
           registration={register('quantity', {
             required: 'Quantity is required',
             min: { value: 0, message: 'Quantity cannot be negative' },
@@ -104,13 +101,13 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
         />
       </div>
 
-      <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-800">
+      <div className="flex items-center justify-end gap-3 pt-3 border-t border-cream-100">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-xl border border-gray-700 hover:bg-gray-800 text-sm font-medium text-gray-300 transition-colors"
+            className="px-4 py-2 rounded-xl border border-cream-200 hover:bg-cream-100 text-sm font-medium text-ink-600 transition-colors"
           >
             Cancel
           </button>
@@ -119,9 +116,9 @@ export default function VehicleForm({ initialData = null, onSubmit, isSubmitting
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed text-gray-950 font-semibold text-sm transition-all shadow-md shadow-emerald-500/20"
+          className="flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-sm shadow-primary-500/20"
         >
-          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          {isSubmitting && <i className="bx bx-loader-alt text-base anim-spin-slow" />}
           {isEditing ? 'Save Changes' : 'Add Vehicle'}
         </button>
       </div>

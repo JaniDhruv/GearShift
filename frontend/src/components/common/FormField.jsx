@@ -1,28 +1,21 @@
 import React from 'react';
 
 /**
- * Reusable FormField component for consistent input styling and accessibility.
- * Wraps a label, icon-adornment input, and error message in a cohesive unit.
+ * Reusable FormField — now accepts `iconClass` (BoxIcons string) instead of a Lucide component.
+ * Original validation registration/error logic unchanged.
  */
 export default function FormField({
-  id,
-  label,
-  type = 'text',
-  placeholder,
-  registration, // from react-hook-form register()
-  error,
-  icon: Icon,
-  rightElement,
-  autoComplete,
+  id, label, type = 'text', placeholder,
+  registration, error, iconClass, rightElement, autoComplete,
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1.5">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-700 mb-1.5">
         {label}
       </label>
       <div className="relative">
-        {Icon && (
-          <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+        {iconClass && (
+          <i className={`bx ${iconClass} absolute left-3.5 top-1/2 -translate-y-1/2 text-base text-ink-400 pointer-events-none`} />
         )}
         <input
           id={id}
@@ -32,21 +25,19 @@ export default function FormField({
           {...registration}
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} ${rightElement ? 'pr-10' : 'pr-4'} py-2.5 rounded-xl bg-gray-800/60 border text-sm text-white placeholder-gray-500 outline-none transition-all focus:ring-2 ${
+          className={`w-full ${iconClass ? 'pl-10' : 'pl-4'} ${rightElement ? 'pr-10' : 'pr-4'} py-2.5 rounded-xl bg-white border text-sm text-ink-900 placeholder-ink-400 outline-none transition-all focus:ring-2 ${
             error
-              ? 'border-red-500/60 focus:ring-red-500/30'
-              : 'border-gray-700 focus:border-emerald-500/60 focus:ring-emerald-500/20'
+              ? 'border-red-400 focus:ring-red-400/20'
+              : 'border-cream-200 focus:border-primary-400 focus:ring-primary-500/15'
           }`}
         />
         {rightElement && (
-          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
-            {rightElement}
-          </div>
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">{rightElement}</div>
         )}
       </div>
       {error && (
-        <p id={`${id}-error`} role="alert" className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
-          <span>⚠</span>
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+          <i className="bx bxs-error-circle text-sm" />
           {error.message}
         </p>
       )}

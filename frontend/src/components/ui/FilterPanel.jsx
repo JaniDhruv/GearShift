@@ -1,5 +1,4 @@
 import React from 'react';
-import { SlidersHorizontal, X } from 'lucide-react';
 
 const CATEGORIES = [
   'SEDAN', 'SUV', 'HATCHBACK', 'TRUCK', 'SPORTS', 'LUXURY', 'ELECTRIC', 'HYBRID',
@@ -30,7 +29,7 @@ export default function FilterPanel({ filters, onChange, onReset }) {
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
       {/* Category chips */}
       <div className="flex items-center gap-1.5 flex-wrap">
-        <SlidersHorizontal className="w-4 h-4 text-gray-500 shrink-0" />
+        <i className="bx bxs-slider text-sm text-ink-400 shrink-0" />
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
@@ -38,8 +37,8 @@ export default function FilterPanel({ filters, onChange, onReset }) {
             onClick={() => setCategory(cat)}
             className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all ${
               filters.category === cat
-                ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
-                : 'border-gray-800 text-gray-400 hover:border-gray-700 hover:text-gray-300 bg-gray-900/40'
+                ? 'bg-primary-500 border-primary-500 text-white shadow-sm'
+                : 'border-cream-300 text-ink-500 hover:border-ink-300 hover:text-ink-800 bg-white'
             }`}
           >
             {cat}
@@ -47,7 +46,7 @@ export default function FilterPanel({ filters, onChange, onReset }) {
         ))}
       </div>
 
-      {/* Price preset select */}
+      {/* Price select */}
       <select
         id="filter-price"
         value={activePricePreset ? `${filters.minPrice}|${filters.maxPrice}` : ''}
@@ -55,13 +54,11 @@ export default function FilterPanel({ filters, onChange, onReset }) {
           const [min, max] = e.target.value.split('|');
           setPricePreset({ minPrice: min, maxPrice: max });
         }}
-        className="px-3 py-1.5 rounded-xl bg-gray-900/60 border border-gray-800 text-xs text-gray-300 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+        className="px-3 py-1.5 rounded-xl bg-white border border-cream-300 text-xs text-ink-600 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-500/15 transition-all shadow-card"
         aria-label="Filter by price range"
       >
         {PRICE_PRESETS.map((p) => (
-          <option key={p.label} value={`${p.minPrice}|${p.maxPrice}`}>
-            {p.label}
-          </option>
+          <option key={p.label} value={`${p.minPrice}|${p.maxPrice}`}>{p.label}</option>
         ))}
       </select>
 
@@ -69,9 +66,9 @@ export default function FilterPanel({ filters, onChange, onReset }) {
       {hasActiveFilters && (
         <button
           onClick={onReset}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-red-400 border border-red-500/20 hover:bg-red-500/10 transition-all"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-red-500 border border-red-200 hover:bg-red-50 transition-all"
         >
-          <X className="w-3.5 h-3.5" />
+          <i className="bx bx-x text-sm" />
           Clear filters
         </button>
       )}

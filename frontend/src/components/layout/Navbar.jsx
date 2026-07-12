@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Car, LayoutDashboard, Shield, LogIn, UserPlus, LogOut, Briefcase } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function Navbar() {
@@ -9,45 +8,52 @@ export default function Navbar() {
   const isAdmin = user?.role === 'admin';
 
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-      isActive
-        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm'
-        : 'text-gray-400 hover:text-white hover:bg-gray-800/60'
+    `relative text-sm font-medium transition-colors duration-150 px-1 py-1 ${
+      isActive ? 'text-ink-900' : 'text-ink-500 hover:text-ink-900'
     }`;
 
+  const activeIndicator = (isActive) =>
+    isActive
+      ? 'after:absolute after:inset-x-0 after:-bottom-px after:h-[2px] after:bg-primary-500 after:rounded-full'
+      : '';
+
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-gray-950/80 border-b border-gray-800/80">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-cream-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo / Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 group-hover:scale-105 transition-transform">
-              <Car className="w-5 h-5" />
+        <div className="flex items-center justify-between h-[60px]">
+
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-500 text-white shadow-sm group-hover:bg-primary-600 transition-colors">
+              <i className="bx bxs-car text-[17px]" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-white">
-              Gear<span className="text-emerald-400">Shift</span>
+            <span className="text-[17px] font-bold tracking-tight text-ink-900">
+              Gear<span className="text-primary-500">Shift</span>
             </span>
           </Link>
 
           {/* Navigation Links */}
-          <nav className="hidden md:flex items-center gap-2">
-            <NavLink to="/" className={navLinkClass}>
+          <nav className="hidden md:flex items-center gap-7">
+            <NavLink to="/" end className={({ isActive }) => `${navLinkClass({ isActive })} ${activeIndicator(isActive)}`}>
               Home
             </NavLink>
-            <NavLink to="/inventory" className={navLinkClass}>
-              <Car className="w-4 h-4" />
+            <NavLink to="/inventory" className={({ isActive }) => `${navLinkClass({ isActive })} ${activeIndicator(isActive)}`}>
               Inventory
             </NavLink>
             {isStaffOrAdmin && (
-              <NavLink to="/workspace" className={navLinkClass}>
-                <Briefcase className="w-4 h-4" />
-                Workspace
+              <NavLink to="/workspace" className={({ isActive }) => `${navLinkClass({ isActive })} ${activeIndicator(isActive)}`}>
+                <span className="flex items-center gap-1.5">
+                  <i className="bx bxs-briefcase text-sm" />
+                  Workspace
+                </span>
               </NavLink>
             )}
             {isAdmin && (
-              <NavLink to="/admin" className={navLinkClass}>
-                <Shield className="w-4 h-4" />
-                Administration
+              <NavLink to="/admin" className={({ isActive }) => `${navLinkClass({ isActive })} ${activeIndicator(isActive)}`}>
+                <span className="flex items-center gap-1.5">
+                  <i className="bx bxs-shield text-sm" />
+                  Administration
+                </span>
               </NavLink>
             )}
           </nav>
@@ -57,42 +63,42 @@ export default function Navbar() {
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 {user?.name && (
-                  <div className="flex items-center gap-2 hidden sm:flex">
-                    <span className="text-sm font-medium text-white">
-                      👤 {user.name}
-                    </span>
-                    <span className="text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-gray-800 text-emerald-400 border border-gray-700">
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream-100 border border-cream-200">
+                    <div className="w-5 h-5 rounded-full bg-primary-500 flex items-center justify-center text-white text-[10px] font-bold">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-xs font-semibold text-ink-800">{user.name}</span>
+                    <span className={`text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full ${
+                      user.role === 'admin' ? 'bg-violet-100 text-violet-700'
+                      : user.role === 'staff' ? 'bg-primary-50 text-primary-700'
+                      : 'bg-cream-200 text-ink-600'
+                    }`}>
                       {user.role}
                     </span>
                   </div>
                 )}
                 <button
                   onClick={logout}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-ink-500 hover:text-ink-900 hover:bg-cream-100 transition-colors"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <i className="bx bx-log-out text-base" />
                   Sign Out
                 </button>
               </div>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  <LogIn className="w-4 h-4" />
+                <Link to="/login" className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-ink-600 hover:text-ink-900 hover:bg-cream-100 transition-colors">
+                  <i className="bx bx-log-in text-base" />
                   Sign In
                 </Link>
-                <Link
-                  to="/register"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-500 hover:bg-emerald-600 text-gray-950 shadow-md shadow-emerald-500/20 transition-all"
-                >
-                  <UserPlus className="w-4 h-4" />
+                <Link to="/register" className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-primary-500 hover:bg-primary-600 text-white shadow-sm shadow-primary-500/20 transition-all">
+                  <i className="bx bx-user-plus text-base" />
                   Register
                 </Link>
               </>
             )}
           </div>
+
         </div>
       </div>
     </header>
