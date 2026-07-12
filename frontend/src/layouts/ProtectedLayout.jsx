@@ -1,9 +1,14 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function ProtectedLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+/**
+ * ProtectedLayout — Guards authenticated routes.
+ * Supports optional role-based access control via the `allowedRoles` prop.
+ */
+export default function ProtectedLayout({ allowedRoles }) {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -14,7 +19,12 @@ export default function ProtectedLayout() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Role-based access guard
+  if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (

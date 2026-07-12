@@ -1,24 +1,46 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { getCurrentUser } from '../services/authService';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // Lazy state initialization from localStorage to prevent unnecessary storage reads on re-render
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
     if (!savedUser) return null;
     try {
       return JSON.parse(savedUser);
-    } catch (e) {
-      console.error('Failed to parse user from localStorage:', e);
+    } catch {
       return null;
     }
   });
+  // true while we verify the stored token on first mount
+  const [isLoading, setIsLoading] = useState(Boolean(localStorage.getItem('token')));
 
-  const [isLoading, setIsLoading] = useState(false);
+  // On mount, verify the stored token is still valid with the backend
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      setIsLoading(false);
+      return;
+    }
 
-  // Synchronize localStorage when token changes
+    (async () => {
+      try {
+        const { user: freshUser } = await getCurrentUser();
+        setUser(freshUser);
+      } catch {
+        // Token is expired or invalid — clear the session
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setToken(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
   const login = useCallback((newToken, userData) => {
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(userData));
@@ -33,7 +55,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  // Sync token deletion across browser tabs
+  // Cross-tab session sync
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === 'token' && !event.newValue) {
