@@ -1,14 +1,17 @@
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true,
+  timeout: 15000,
 });
 
-// Request interceptor for attaching authentication token if present
+// Request interceptor: Attach JWT access token from localStorage
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -22,11 +25,15 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for standardized error handling
+// Response interceptor: Centralized error normalization & 401 Unauthorized handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Architectural foundation for centralized API error handling
+    if (error.response && error.response.status === 401) {
+      // Clear expired or invalid authentication state
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
     return Promise.reject(error);
   }
 );
